@@ -1,0 +1,501 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f7f8fc">
+<title>GeoLab — Interactive Geometry</title>
+<style>
+:root {
+  --ink:#17213b; --muted:#69758d; --blue:#5458e8;
+  --line:#e5e8f1; --paper:#ffffff; --bg:#f7f8fc;
+  --mint:#d9f7e9; --yellow:#fff1c8; --lavender:#eceaff;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,sans-serif;
+  line-height:1.5;
+}
+button,select,input { font:inherit; }
+button { cursor:pointer; }
+header {
+  background:white; border-bottom:1px solid var(--line);
+  padding:15px 5%; display:flex; align-items:center;
+  justify-content:space-between; gap:16px; flex-wrap:wrap;
+}
+.brand { display:flex; align-items:center; gap:11px; font-weight:850; font-size:23px; letter-spacing:-1px; }
+.logo {
+  width:39px;height:39px;border-radius:12px;background:var(--blue);
+  color:white;display:grid;place-items:center;font-size:22px;
+}
+.brand small { display:block;font-size:11px;font-weight:500;color:var(--muted);letter-spacing:0; }
+.grade { display:flex;align-items:center;gap:9px;font-size:13px;font-weight:700; }
+select { border:1px solid var(--line);border-radius:10px;padding:10px;background:white;color:var(--ink); }
+main { max-width:1160px;margin:auto;padding:28px 20px 55px; }
+.hero {
+  padding:32px;border-radius:24px;
+  background:linear-gradient(120deg,#e9eaff,#f0f7ff 65%,#e0f8ee);
+  display:grid;grid-template-columns:1.5fr 1fr;gap:20px;align-items:center;
+}
+.eyebrow { text-transform:uppercase;letter-spacing:1.6px;font-size:11px;font-weight:850;color:var(--blue); }
+h1 { font-size:clamp(30px,5vw,48px);line-height:1.08;letter-spacing:-2px;margin:12px 0; }
+h2 { font-size:23px;letter-spacing:-.6px;margin:0 0 6px; }
+h3 { font-size:16px;margin:0 0 6px; }
+p { color:var(--muted);margin:6px 0 14px; }
+.hero-art { min-height:155px;display:grid;place-items:center; }
+.hero-art svg { width:100%;max-width:300px;height:170px; }
+.pill {
+  display:inline-block;background:white;border:1px solid #dfe2ff;
+  border-radius:100px;padding:6px 11px;font-size:12px;font-weight:750;
+}
+.tabs { display:flex;gap:8px;overflow-x:auto;padding:22px 0 17px; }
+.tab {
+  border:1px solid var(--line);background:white;color:var(--muted);
+  border-radius:12px;padding:11px 15px;font-size:13px;font-weight:750;
+  white-space:nowrap;
+}
+.tab.active { background:var(--ink);color:white;border-color:var(--ink); }
+.panel { display:none; }
+.panel.active { display:block; }
+.section-head { display:flex;justify-content:space-between;align-items:start;gap:14px;margin:8px 0 18px; }
+.layout { display:grid;grid-template-columns:1fr 1fr;gap:18px; }
+.card {
+  background:white;border:1px solid var(--line);border-radius:19px;
+  padding:22px;min-width:0;
+}
+.canvas {
+  background:#fafbff;border:1px solid var(--line);border-radius:14px;
+  min-height:245px;display:grid;place-items:center;padding:12px;margin:16px 0;
+}
+.canvas svg { width:100%;max-width:410px;height:auto;max-height:290px;overflow:visible; }
+.shape-buttons { display:flex;gap:8px;flex-wrap:wrap;margin:12px 0; }
+.choice {
+  padding:9px 13px;border:1px solid var(--line);border-radius:10px;
+  background:white;color:var(--ink);font-weight:700;
+}
+.choice.active { background:var(--lavender);border-color:#aaa5ff;color:#3938a8; }
+.stats { display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px; }
+.stat { background:#f5f6fb;border-radius:13px;padding:14px; }
+.stat span { display:block;color:var(--muted);font-size:12px; }
+.stat strong { font-size:23px;letter-spacing:-.5px; }
+.formula { background:#f1f0ff;padding:12px 14px;border-radius:11px;margin-top:12px;font-size:14px; }
+.control { margin:20px 0; }
+.control label { display:flex;justify-content:space-between;gap:12px;font-size:13px;font-weight:700;margin-bottom:9px; }
+.control output { color:var(--blue); }
+input[type=range] { width:100%;accent-color:var(--blue); }
+.note { background:#eaf9f2;border-radius:12px;padding:13px 15px;color:#24684c;font-size:13px;margin-top:14px; }
+.primary {
+  border:0;background:var(--blue);color:white;padding:12px 17px;
+  border-radius:11px;font-weight:750;
+}
+.secondary { background:white;border:1px solid var(--line);color:var(--ink); }
+.full { width:100%; }
+.angle-inputs { display:grid;grid-template-columns:1fr 1fr;gap:12px; }
+input[type=number] { width:100%;padding:11px;border:1px solid var(--line);border-radius:10px; }
+.question {
+  padding:20px;background:#f8f8ff;border:1px solid #e8e7ff;border-radius:14px;
+  font-size:19px;font-weight:750;margin:17px 0;
+}
+.answers { display:grid;grid-template-columns:1fr 1fr;gap:10px; }
+.answer {
+  background:white;border:1px solid var(--line);padding:13px;border-radius:11px;
+  text-align:left;font-weight:700;color:var(--ink);
+}
+.answer:focus-visible,.tab:focus-visible,button:focus-visible { outline:3px solid #a8a5ff;outline-offset:2px; }
+.feedback { min-height:48px;margin-top:14px;font-size:14px; }
+footer { text-align:center;color:var(--muted);font-size:12px;margin-top:32px; }
+@media(max-width:720px) {
+  main { padding:18px 13px 40px; }
+  .hero { grid-template-columns:1fr;padding:24px;gap:0; }
+  .hero-art { min-height:100px; }
+  .hero-art svg { height:120px; }
+  .layout { grid-template-columns:1fr; }
+  .card { padding:17px; }
+  .section-head { flex-direction:column; }
+  header { padding:12px 15px; }
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <div class="logo">△</div>
+    <div>GeoLab<small>Explore. Understand. Master.</small></div>
+  </div>
+  <label class="grade">Learning level
+    <select id="grade" aria-label="Choose grade">
+      <option value="4">Grade 4</option><option value="5">Grade 5</option>
+      <option value="6">Grade 6</option><option value="7">Grade 7</option>
+      <option value="8">Grade 8</option>
+    </select>
+  </label>
+</header>
+
+<main>
+  <section class="hero">
+    <div>
+      <span class="eyebrow">Your geometry playground</span>
+      <h1>Big ideas.<br>One shape at a time.</h1>
+      <p>Explore shapes, experiment with measurements, and discover the maths behind them.</p>
+      <span class="pill" id="gradePill">Made for Grade 4</span>
+    </div>
+    <div class="hero-art">
+      <svg viewBox="0 0 300 175" role="img" aria-label="Colourful geometric shapes">
+        <rect x="13" y="20" width="91" height="91" rx="12" fill="#c9c7ff" transform="rotate(-9 58 65)"/>
+        <circle cx="217" cy="61" r="43" fill="#b7f0d8"/>
+        <path d="M119 149 L166 60 L215 149 Z" fill="#ffc96d" stroke="#e5a53f" stroke-width="2"/>
+        <path d="M35 140 L74 113 L105 145 Z" fill="#f3a8cf"/>
+        <circle cx="248" cy="133" r="15" fill="#8986f7"/>
+        <path d="M40 49 L73 49 L73 82" fill="none" stroke="#5458e8" stroke-width="3"/>
+      </svg>
+    </div>
+  </section>
+
+  <nav class="tabs" aria-label="Geometry tools">
+    <button class="tab active" data-tab="shapes">◇ Shape Explorer</button>
+    <button class="tab" data-tab="measure">▦ Area & Perimeter</button>
+    <button class="tab" data-tab="angles">∠ Angle Explorer</button>
+    <button class="tab" data-tab="practice">✎ Practice Zone</button>
+  </nav>
+
+  <section class="panel active" id="shapes">
+    <div class="section-head">
+      <div><h2>Meet the shapes</h2><p>Choose a shape to discover its properties.</p></div>
+      <span class="pill">Explore & discover</span>
+    </div>
+    <div class="layout">
+      <article class="card">
+        <h3 id="shapeTitle">Rectangle</h3>
+        <p id="shapeDescription">A quadrilateral with four right angles.</p>
+        <div class="canvas"><svg id="shapeSvg" viewBox="0 0 320 220" role="img" aria-label="Selected geometric shape"></svg></div>
+        <div class="shape-buttons">
+          <button class="choice active" data-shape="rectangle">Rectangle</button>
+          <button class="choice" data-shape="square">Square</button>
+          <button class="choice" data-shape="triangle">Triangle</button>
+          <button class="choice" data-shape="circle">Circle</button>
+        </div>
+      </article>
+      <article class="card">
+        <h3>Shape facts</h3>
+        <p>What makes this shape special?</p>
+        <div class="stats">
+          <div class="stat"><span>Sides</span><strong id="sides">4</strong></div>
+          <div class="stat"><span>Vertices (corners)</span><strong id="vertices">4</strong></div>
+          <div class="stat"><span>Right angles</span><strong id="rightAngles">4</strong></div>
+          <div class="stat"><span>Equal sides</span><strong id="equalSides">Opposite</strong></div>
+        </div>
+        <div class="formula"><strong>Think about it:</strong><br><span id="shapeFact">What happens if you make the rectangle longer?</span></div>
+        <div class="note" id="shapeTip">A rectangle's opposite sides are equal in length.</div>
+      </article>
+    </div>
+  </section>
+
+  <section class="panel" id="measure">
+    <div class="section-head">
+      <div><h2>Area & perimeter lab</h2><p>Change the dimensions and watch the maths update.</p></div>
+      <span class="pill">Experiment freely</span>
+    </div>
+    <div class="layout">
+      <article class="card">
+        <h3>Your rectangle</h3>
+        <p>Move the sliders to resize your shape.</p>
+        <div class="canvas"><svg id="measureSvg" viewBox="0 0 340 230" role="img" aria-label="Resizable rectangle with labelled dimensions"></svg></div>
+        <div class="control">
+          <label for="length">Length <output id="lengthOut">8 units</output></label>
+          <input id="length" type="range" min="1" max="12" value="8">
+        </div>
+        <div class="control">
+          <label for="width">Width <output id="widthOut">4 units</output></label>
+          <input id="width" type="range" min="1" max="10" value="4">
+        </div>
+      </article>
+      <article class="card">
+        <h3>Live calculations</h3>
+        <p>Here is what your measurements tell us.</p>
+        <div class="stats">
+          <div class="stat"><span>Area</span><strong id="area">32 units²</strong></div>
+          <div class="stat"><span>Perimeter</span><strong id="perimeter">24 units</strong></div>
+        </div>
+        <div class="formula"><strong>Area</strong><br>length × width<br><br><strong>Perimeter</strong><br>2 × (length + width)</div>
+        <div class="note" id="measureTip">Area measures the space inside. Perimeter measures the distance around the outside.</div>
+      </article>
+    </div>
+  </section>
+
+  <section class="panel" id="angles">
+    <div class="section-head">
+      <div><h2>Angle explorer</h2><p>Investigate angles and the special rule for triangles.</p></div>
+      <span class="pill">Angles add up</span>
+    </div>
+    <div class="layout">
+      <article class="card">
+        <h3>Build a triangle</h3>
+        <p>Choose two angles. The third is calculated for you.</p>
+        <div class="canvas"><svg id="triangleSvg" viewBox="0 0 320 225" role="img" aria-label="Triangle showing three angle measurements"></svg></div>
+        <div class="angle-inputs">
+          <div class="control"><label for="angleA">Angle A (°)</label><input id="angleA" type="number" min="1" max="178" value="60"></div>
+          <div class="control"><label for="angleB">Angle B (°)</label><input id="angleB" type="number" min="1" max="178" value="60"></div>
+        </div>
+      </article>
+      <article class="card">
+        <h3>Your angle results</h3>
+        <p>The interior angles of every triangle total 180°.</p>
+        <div class="stats">
+          <div class="stat"><span>Angle A</span><strong id="resultA">60°</strong></div>
+          <div class="stat"><span>Angle B</span><strong id="resultB">60°</strong></div>
+          <div class="stat"><span>Angle C</span><strong id="resultC">60°</strong></div>
+          <div class="stat"><span>Total</span><strong id="resultTotal">180°</strong></div>
+        </div>
+        <div class="formula" id="angleFormula">Angle C = 180° − 60° − 60° = 60°</div>
+        <div class="note" id="angleTip">All three angles are equal, so this is an equilateral triangle.</div>
+      </article>
+    </div>
+  </section>
+
+  <section class="panel" id="practice">
+    <div class="section-head">
+      <div><h2>Practice zone</h2><p>Test what you know. Learn from every answer.</p></div>
+      <span class="pill" id="scorePill">Score: 0 / 0</span>
+    </div>
+    <div class="layout">
+      <article class="card">
+        <span class="eyebrow" id="questionLevel">GRADE 4 · QUESTION 1</span>
+        <div class="question" id="questionText">What is the perimeter of a rectangle that is 5 units long and 3 units wide?</div>
+        <div class="answers" id="answers"></div>
+        <div class="feedback" id="feedback" aria-live="polite"></div>
+        <button class="primary full" id="nextQuestion">Next question →</button>
+      </article>
+      <article class="card">
+        <h3>Your learning progress</h3>
+        <p>Practise at your own pace. Try to explain why each answer works.</p>
+        <div class="stats">
+          <div class="stat"><span>Answered</span><strong id="answered">0</strong></div>
+          <div class="stat"><span>Correct</span><strong id="correct">0</strong></div>
+        </div>
+        <div class="formula"><strong>Learning tip</strong><br id="learningTip">For perimeter, add all the side lengths. For area, find the space inside the shape.</div>
+        <div class="note">Tutoring tip: ask yourself what the question is measuring before choosing a formula.</div>
+        <button class="primary secondary full" style="margin-top:14px" id="resetScore">Reset score</button>
+      </article>
+    </div>
+  </section>
+  <footer>GeoLab · Learn by exploring · Built for curious minds in Grades 4–8</footer>
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+let currentShape = "rectangle";
+let score = 0, answered = 0, currentQuestion = null, locked = false;
+
+const shapeInfo = {
+  rectangle: {
+    title:"Rectangle", description:"A quadrilateral with four right angles.",
+    sides:"4", vertices:"4", rightAngles:"4", equalSides:"Opposite",
+    fact:"What happens if you make the rectangle longer?",
+    tip:"Opposite sides are equal and parallel. Every angle is 90°."
+  },
+  square: {
+    title:"Square", description:"A quadrilateral with four equal sides and four right angles.",
+    sides:"4", vertices:"4", rightAngles:"4", equalSides:"All 4",
+    fact:"A square is also a rectangle. What properties do they share?",
+    tip:"Every square is a rectangle, but not every rectangle is a square."
+  },
+  triangle: {
+    title:"Triangle", description:"A polygon with three straight sides and three vertices.",
+    sides:"3", vertices:"3", rightAngles:"Varies",
+    equalSides:"Varies",
+    fact:"Can you draw a triangle with one right angle?",
+    tip:"The interior angles of every triangle add up to 180°."
+  },
+  circle: {
+    title:"Circle", description:"A round, closed shape with no straight sides or vertices.",
+    sides:"0", vertices:"0", rightAngles:"0", equalSides:"Infinite radii",
+    fact:"Every point on the circle is the same distance from its centre.",
+    tip:"The diameter passes through the centre and is twice the radius."
+  }
+};
+
+function showShape(name) {
+  currentShape = name;
+  const s = shapeInfo[name];
+  $("shapeTitle").textContent = s.title;
+  $("shapeDescription").textContent = s.description;
+  ["sides","vertices","rightAngles","equalSides"].forEach((id,i) =>
+    $(id).textContent = [s.sides,s.vertices,s.rightAngles,s.equalSides][i]
+  );
+  $("shapeFact").textContent = s.fact;
+  $("shapeTip").textContent = s.tip;
+  document.querySelectorAll("[data-shape]").forEach(b =>
+    b.classList.toggle("active", b.dataset.shape === name)
+  );
+  const svg = $("shapeSvg");
+  const shapes = {
+    rectangle: '<rect x="65" y="48" width="190" height="115" rx="2" fill="#dcdcff" stroke="#5458e8" stroke-width="3"/><path d="M65 63 V48 H80 M240 163 H255 V148" fill="none" stroke="#5458e8" stroke-width="2"/><text x="160" y="185" text-anchor="middle" font-size="12" fill="#5458e8">Opposite sides equal</text>',
+    square: '<rect x="83" y="32" width="154" height="154" fill="#d9f7e9" stroke="#19865d" stroke-width="3"/><path d="M83 48 V32 H99" fill="none" stroke="#19865d" stroke-width="2"/><text x="160" y="207" text-anchor="middle" font-size="12" fill="#19865d">All sides equal</text>',
+    triangle: '<path d="M160 28 L275 185 L45 185 Z" fill="#fff0c8" stroke="#d99122" stroke-width="3" stroke-linejoin="round"/><text x="160" y="78" text-anchor="middle" font-size="14" fill="#80520d">A</text><text x="65" y="176" font-size="14" fill="#80520d">B</text><text x="252" y="176" font-size="14" fill="#80520d">C</text><text x="160" y="211" text-anchor="middle" font-size="12" fill="#80520d">3 sides · 3 angles</text>',
+    circle: '<circle cx="160" cy="105" r="70" fill="#f7dff0" stroke="#bc5296" stroke-width="3"/><circle cx="160" cy="105" r="3" fill="#bc5296"/><path d="M160 105 H230" stroke="#bc5296" stroke-width="2" stroke-dasharray="5 4"/><text x="190" y="96" font-size="12" fill="#8f3470">Radius</text><text x="160" y="198" text-anchor="middle" font-size="12" fill="#8f3470">No straight sides</text>'
+  };
+  svg.innerHTML = shapes[name];
+}
+document.querySelectorAll("[data-shape]").forEach(b =>
+  b.addEventListener("click", () => showShape(b.dataset.shape))
+);
+
+function updateMeasure() {
+  const l = +$("length").value, w = +$("width").value;
+  $("lengthOut").textContent = l + " units";
+  $("widthOut").textContent = w + " units";
+  $("area").textContent = (l*w) + " units²";
+  $("perimeter").textContent = (2*(l+w)) + " units";
+  const scale = Math.min(22, 200/l, 130/w);
+  const rw = l*scale, rh = w*scale, x = (340-rw)/2, y = (210-rh)/2+5;
+  $("measureSvg").innerHTML =
+    `<rect x="${x}" y="${y}" width="${rw}" height="${rh}" fill="#dcdcff" stroke="#5458e8" stroke-width="2.5" rx="2"/>`+
+    `<text x="170" y="${y-9}" text-anchor="middle" font-size="13" fill="#5458e8">${l} units</text>`+
+    `<text x="${x+rw+7}" y="${y+rh/2+4}" font-size="13" fill="#5458e8">${w}</text>`+
+    `<text x="170" y="220" text-anchor="middle" font-size="11" fill="#69758d">Area = ${l} × ${w}</text>`;
+  $("measureTip").textContent =
+    `Area = ${l} × ${w} = ${l*w} square units. Perimeter = 2 × (${l} + ${w}) = ${2*(l+w)} units.`;
+}
+$("length").addEventListener("input", updateMeasure);
+$("width").addEventListener("input", updateMeasure);
+
+function updateAngles() {
+  let a = Number($("angleA").value), b = Number($("angleB").value);
+  if (!Number.isFinite(a)) a = 60;
+  if (!Number.isFinite(b)) b = 60;
+  a = Math.round(a); b = Math.round(b);
+  const valid = a >= 1 && b >= 1 && a+b < 180 && a <= 178 && b <= 178;
+  if (!valid) {
+    $("resultC").textContent = "—";
+    $("resultTotal").textContent = "—";
+    $("angleFormula").textContent = "Choose positive angles whose sum is less than 180°.";
+    $("angleTip").textContent = "A triangle's three interior angles must each be greater than 0°.";
+    $("triangleSvg").innerHTML = '<text x="160" y="105" text-anchor="middle" fill="#69758d" font-size="13">Adjust the angles to build a triangle</text>';
+    return;
+  }
+  const c = 180-a-b;
+  $("resultA").textContent = a+"°";
+  $("resultB").textContent = b+"°";
+  $("resultC").textContent = c+"°";
+  $("resultTotal").textContent = "180°";
+  $("angleFormula").textContent = `C = 180° − ${a}° − ${b}° = ${c}°`;
+  const kinds = [a,b,c].some(x=>x===90) ? "This is a right-angled triangle."
+    : [a,b,c].some(x=>x>90) ? "This is an obtuse triangle because one angle is greater than 90°."
+    : "This is an acute triangle because all three angles are less than 90°.";
+  $("angleTip").textContent = a===b && b===c
+    ? "All three angles are equal: this is an equilateral triangle."
+    : kinds;
+  // Draw an approximate triangle; labels show the exact angle values.
+  const A = a*Math.PI/180, B = b*Math.PI/180;
+  const left=[42,190], right=[278,190];
+  const side=236, height=side*Math.sin(A)*Math.sin(B)/Math.sin(A+B);
+  const dx=side*Math.sin(A)*Math.cos(B)/Math.sin(A+B);
+  const apexX=Math.max(30,Math.min(290,left[0]+dx));
+  const apexY=Math.max(22,190-Math.min(155,height));
+  $("triangleSvg").innerHTML =
+    `<path d="M${left[0]} ${left[1]} L${apexX} ${apexY} L${right[0]} ${right[1]} Z" fill="#e5e4ff" stroke="#5458e8" stroke-width="2.5" stroke-linejoin="round"/>`+
+    `<text x="35" y="210" font-size="12" fill="#3938a8">A: ${a}°</text>`+
+    `<text x="230" y="210" font-size="12" fill="#3938a8">B: ${b}°</text>`+
+    `<text x="${apexX}" y="${Math.max(14,apexY-10)}" text-anchor="middle" font-size="12" fill="#3938a8">C: ${c}°</text>`;
+}
+$("angleA").addEventListener("input", updateAngles);
+$("angleB").addEventListener("input", updateAngles);
+
+const questionBank = {
+  4: [
+    {q:"A rectangle is 5 units long and 3 units wide. What is its perimeter?",o:["8 units","15 units","16 units","30 units"],a:2,why:"Add all four sides: 5 + 3 + 5 + 3 = 16 units."},
+    {q:"How many sides does a hexagon have?",o:["5","6","7","8"],a:1,why:"A hexagon has 6 straight sides."},
+    {q:"A square has sides of 4 cm. What is its perimeter?",o:["8 cm","12 cm","16 cm","20 cm"],a:2,why:"Four equal sides: 4 × 4 = 16 cm."},
+    {q:"How many right angles are in a rectangle?",o:["1","2","3","4"],a:3,why:"Every rectangle has four 90° angles."}
+  ],
+  5: [
+    {q:"A rectangle is 7 cm by 4 cm. What is its area?",o:["11 cm²","22 cm²","28 cm²","30 cm²"],a:2,why:"Area = length × width = 7 × 4 = 28 cm²."},
+    {q:"How many degrees are in a right angle?",o:["45°","90°","180°","360°"],a:1,why:"A right angle measures exactly 90°."},
+    {q:"How many vertices does a pentagon have?",o:["4","5","6","8"],a:1,why:"A pentagon has five sides and five vertices."}
+  ],
+  6: [
+    {q:"A triangle has angles of 50° and 60°. Find its third angle.",o:["60°","70°","80°","90°"],a:1,why:"Triangle angles total 180°: 180 − 50 − 60 = 70°."},
+    {q:"What is the area of a triangle with base 8 cm and height 5 cm?",o:["13 cm²","20 cm²","40 cm²","26 cm²"],a:1,why:"Area = ½ × base × height = ½ × 8 × 5 = 20 cm²."},
+    {q:"What is the perimeter of a square with side length 6 cm?",o:["12 cm","24 cm","36 cm","18 cm"],a:1,why:"Perimeter = 4 × side = 4 × 6 = 24 cm."}
+  ],
+  7: [
+    {q:"A parallelogram has base 9 cm and perpendicular height 4 cm. Find its area.",o:["13 cm²","26 cm²","36 cm²","72 cm²"],a:2,why:"Area = base × perpendicular height = 9 × 4 = 36 cm²."},
+    {q:"Two angles on a straight line add to 180°. One is 125°. Find the other.",o:["45°","55°","65°","75°"],a:1,why:"180° − 125° = 55°."},
+    {q:"A rectangle is 10 m long and 3 m wide. What is its area?",o:["13 m²","26 m²","30 m²","60 m²"],a:2,why:"Area = 10 × 3 = 30 m²."}
+  ],
+  8: [
+    {q:"A triangle has angles 2x°, 3x° and 4x°. What is x?",o:["15°","20°","30°","45°"],a:1,why:"2x + 3x + 4x = 180°, so 9x = 180° and x = 20°."},
+    {q:"A circle has radius 5 cm. What is its diameter?",o:["2.5 cm","5 cm","10 cm","25 cm"],a:2,why:"Diameter = 2 × radius = 2 × 5 = 10 cm."},
+    {q:"A rectangle's area is 48 cm² and its length is 8 cm. What is its width?",o:["4 cm","6 cm","8 cm","12 cm"],a:1,why:"Width = area ÷ length = 48 ÷ 8 = 6 cm."}
+  ]
+};
+const questionIndex = {};
+function newQuestion() {
+  locked = false;
+  const grade = +$("grade").value;
+  const list = questionBank[grade];
+  questionIndex[grade] = ((questionIndex[grade] || 0) + 1) % list.length;
+  currentQuestion = list[questionIndex[grade]];
+  $("questionLevel").textContent = `GRADE ${grade} · QUESTION ${questionIndex[grade]+1}`;
+  $("questionText").textContent = currentQuestion.q;
+  $("feedback").textContent = "";
+  $("feedback").style.color = "";
+  $("answers").innerHTML = "";
+  currentQuestion.o.forEach((option,i) => {
+    const button = document.createElement("button");
+    button.className = "answer";
+    button.textContent = String.fromCharCode(65+i)+". "+option;
+    button.addEventListener("click", () => chooseAnswer(i,button));
+    $("answers").appendChild(button);
+  });
+}
+function chooseAnswer(index,button) {
+  if (locked) return;
+  locked = true;
+  answered++;
+  const correct = index === currentQuestion.a;
+  if (correct) score++;
+  $("feedback").textContent = (correct ? "✓ Correct! " : "Not quite. ") + currentQuestion.why;
+  $("feedback").style.color = correct ? "#19865d" : "#b45336";
+  $("answers").querySelectorAll("button").forEach((b,i) => {
+    b.disabled = true;
+    if (i === currentQuestion.a) {
+      b.style.borderColor = "#19865d";
+      b.style.background = "#eaf9f2";
+    }
+  });
+  $("answered").textContent = answered;
+  $("correct").textContent = score;
+  $("scorePill").textContent = `Score: ${score} / ${answered}`;
+}
+$("nextQuestion").addEventListener("click",newQuestion);
+$("resetScore").addEventListener("click",() => {
+  score=0; answered=0;
+  $("answered").textContent="0"; $("correct").textContent="0";
+  $("scorePill").textContent="Score: 0 / 0";
+  newQuestion();
+});
+document.querySelectorAll("[data-tab]").forEach(button => {
+  button.addEventListener("click",() => {
+    document.querySelectorAll("[data-tab]").forEach(b=>b.classList.toggle("active",b===button));
+    document.querySelectorAll(".panel").forEach(p=>p.classList.toggle("active",p.id===button.dataset.tab));
+  });
+});
+$("grade").addEventListener("change",() => {
+  $("gradePill").textContent="Made for Grade "+$("grade").value;
+  $("learningTip").textContent = +$("grade").value <= 5
+    ? "Draw the shape and label its sides. Count carefully before calculating."
+    : +$("grade").value <= 7
+    ? "Write the formula first, substitute the measurements, and check the units."
+    : "Break the problem into steps. Use known angle sums and formulas to find the unknown.";
+  newQuestion();
+});
+showShape("rectangle");
+updateMeasure();
+updateAngles();
+newQuestion();
+</script>
+</body>
+</html>
