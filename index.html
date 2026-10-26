@@ -1,766 +1,578 @@
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GeoLab — 3D Geometry Lab</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GeoLab — Explore Geometry</title>
+<meta name="description" content="Explore geometry with an interactive builder, 3D shapes, formulas, and practice for Grades 4–8.">
 <style>
-:root {
-  --paper:#f8f6ef;
-  --ink:#252b27;
-  --muted:#777970;
-  --line:#deddd4;
-  --white:#fffef9;
-  --green:#c9dfbd;
-  --blue:#cbdff0;
-  --coral:#f1c4b5;
-  --yellow:#f2df9d;
-}
+:root{--bg:#f5f7ff;--panel:#fff;--ink:#18213b;--muted:#64708b;--line:#e0e6f4;--primary:#5458e8;--primary2:#777bff;--teal:#18a999;--orange:#ffad5a;--shadow:0 12px 32px #202c5c12}
 *{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{
-  margin:0;background:var(--paper);color:var(--ink);
-  font-family:"Trebuchet MS",Arial,sans-serif;line-height:1.5
-}
-button,select,input{font:inherit}
-button{cursor:pointer}
-nav{
-  padding:17px 6%;display:flex;justify-content:space-between;
-  align-items:center;gap:20px;border-bottom:1px solid var(--line)
-}
-.logo{font-size:24px;font-weight:900;letter-spacing:-1px;color:var(--ink);text-decoration:none}
-.logo span{color:#64865b}
-.nav-links{display:flex;gap:20px;flex-wrap:wrap}
-.nav-links a{font-size:13px;text-decoration:none;color:var(--ink)}
-.nav-links a:hover{text-decoration:underline}
-main{max-width:1150px;margin:auto;padding:0 24px}
-.hero{
-  padding:65px 0 48px;display:grid;grid-template-columns:1.1fr .9fr;
-  align-items:center;gap:30px
-}
-.kicker{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;font-weight:800;color:var(--muted)}
-h1{font-size:clamp(44px,7vw,76px);line-height:1.02;letter-spacing:-4px;margin:10px 0 18px}
-h1 em{font-style:normal;background:var(--yellow);padding:0 8px;border-radius:7px}
-.hero p{color:var(--muted);margin:0 0 23px}
-.primary,.btn{
-  display:inline-flex;align-items:center;justify-content:center;gap:8px;
-  padding:11px 16px;border-radius:8px;border:1px solid var(--ink);
-  background:var(--ink);color:white;text-decoration:none;font-size:13px;font-weight:700
-}
-.btn{background:var(--white);color:var(--ink)}
-button:hover,.primary:hover{filter:brightness(.97)}
-.hero-art{
-  min-height:260px;background:var(--blue);border:1px solid var(--ink);
-  border-radius:18px;display:grid;place-items:center;overflow:hidden;position:relative
-}
-.hero-art svg{width:90%;max-width:380px}
-.hero-note{position:absolute;bottom:13px;right:13px;background:var(--white);border:1px solid var(--ink);border-radius:6px;padding:5px 9px;font-size:12px;transform:rotate(-3deg)}
-.section{padding:42px 0;border-top:1px solid var(--line);scroll-margin-top:18px}
-.section-heading{display:flex;justify-content:space-between;align-items:end;gap:15px;margin-bottom:22px}
-h2{font-size:clamp(29px,4vw,42px);letter-spacing:-1.7px;line-height:1.15;margin:4px 0 0}
-h3{margin:0 0 12px;font-size:18px}
-.panel{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:20px}
-.lab-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(240px,.8fr);gap:14px}
-.viewer-panel{padding:12px;min-width:0}
-.viewer-top{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:5px 5px 12px}
-.viewer-top strong{font-size:14px}
-.status{font-size:11px;color:var(--muted)}
-#viewer{
-  height:390px;min-height:300px;position:relative;overflow:hidden;
-  border-radius:10px;background:#e9edf0;touch-action:pan-y
-}
-#viewer canvas{display:block;width:100%;height:100%;outline:none}
-.viewer-help{
-  position:absolute;bottom:10px;left:10px;padding:6px 9px;
-  background:#fffef9d9;border:1px solid #d8d8d0;border-radius:6px;
-  font-size:11px;pointer-events:none
-}
-.viewer-buttons{display:flex;gap:7px;flex-wrap:wrap}
-.viewer-buttons button{font-size:11px;padding:7px 9px}
-.viewer-error{
-  position:absolute;inset:0;display:none;align-items:center;justify-content:center;
-  text-align:center;padding:25px;color:var(--ink);background:#e9edf0
-}
-.viewer-error.show{display:flex}
-.viewer-error div{max-width:330px}
-.viewer-error p{font-size:13px;color:var(--muted)}
-.controls{display:flex;flex-direction:column;gap:17px}
-.control label{display:flex;justify-content:space-between;gap:8px;font-size:12px;font-weight:700;margin-bottom:7px}
-.control output{color:#64865b}
-input[type=range]{width:100%;accent-color:#64865b;cursor:pointer}
-select{
-  width:100%;padding:10px;border:1px solid var(--line);border-radius:7px;
-  background:var(--white);color:var(--ink)
-}
-.measure-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.measure{padding:12px;border-radius:9px;background:var(--green);min-width:0}
-.measure:nth-child(2){background:var(--yellow)}
-.measure small{font-size:11px;display:block;color:#50554c}
-.measure strong{display:block;font-size:20px;overflow-wrap:anywhere}
-.measure-wide{grid-column:1/-1;background:var(--blue)}
-.shape-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
-.shape-card{
-  text-align:left;padding:12px;background:var(--white);color:var(--ink);
-  border:1px solid var(--line);border-radius:11px;transition:transform .15s
-}
-.shape-card:hover{transform:translateY(-2px);border-color:var(--ink)}
-.shape-card.active{border:2px solid var(--ink);padding:11px}
-.shape-art{height:95px;border-radius:7px;display:grid;place-items:center;margin-bottom:10px}
-.shape-art svg{width:100px;height:85px}
-.shape-card strong{display:block;font-size:14px}
-.shape-card small{font-size:11px;color:var(--muted)}
-.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:17px}
-.filter{
-  border:1px solid var(--line);background:var(--white);color:var(--ink);
-  padding:8px 13px;border-radius:30px;font-size:12px
-}
-.filter.active{background:var(--ink);color:white;border-color:var(--ink)}
+html{scroll-behavior:smooth;scroll-padding-top:90px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+header{position:sticky;top:0;z-index:10;background:#ffffffed;backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav{max-width:1200px;margin:auto;padding:12px 22px;display:flex;align-items:center;justify-content:space-between;gap:18px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:900;font-size:1.25rem;text-decoration:none;color:var(--ink)}
+.logo{display:grid;place-items:center;width:40px;height:40px;border-radius:13px;background:linear-gradient(135deg,var(--primary),#9a75ff);color:white;font-size:1.25rem}
+.navlinks{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.navlinks a{padding:9px 12px;text-decoration:none;color:var(--muted);font-weight:750;border-radius:10px;font-size:.93rem}
+.navlinks a:hover,.navlinks a.active{background:#eeeeff;color:var(--primary)}
+.menuBtn{display:none;border:1px solid var(--line);background:white;border-radius:10px;padding:8px 11px;font-weight:800}
+main{max-width:1200px;margin:auto;padding:28px 22px 70px}
+.hero{display:grid;grid-template-columns:1.2fr .8fr;gap:24px;align-items:center;padding:34px 0 28px}
+.eyebrow{display:inline-block;background:#e8e9ff;color:var(--primary);padding:6px 11px;border-radius:999px;font-weight:850;font-size:.8rem;letter-spacing:.04em;text-transform:uppercase}
+.hero h1{font-size:clamp(2.3rem,5vw,4.4rem);line-height:1.04;letter-spacing:-.055em;margin:16px 0}
+.gradient{background:linear-gradient(90deg,var(--primary),#9b61e8);color:transparent;background-clip:text}
+.hero p{font-size:1.12rem;color:var(--muted);max-width:650px}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px}
+.btn{display:inline-flex;justify-content:center;align-items:center;gap:8px;border:0;border-radius:12px;padding:12px 17px;background:var(--primary);color:white;font-weight:850;text-decoration:none;cursor:pointer;box-shadow:0 6px 15px #5458e82a}
+.btn.secondary{background:white;color:var(--ink);border:1px solid var(--line);box-shadow:none}
+.btn:hover{filter:brightness(1.05);transform:translateY(-1px)}
+.hero-art{min-height:300px;display:grid;place-items:center;border-radius:28px;background:radial-gradient(circle at 30% 20%,#c9cbff,transparent 40%),linear-gradient(135deg,#e6e8ff,#e4faf5);overflow:hidden;position:relative}
+.hero-art svg{width:min(90%,390px);height:auto;filter:drop-shadow(0 15px 20px #4c51b533)}
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0 32px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:17px;box-shadow:var(--shadow)}
+.stat strong{display:block;font-size:1.5rem}
+.stat span{color:var(--muted);font-size:.9rem}
+section{margin-top:40px}
+.section-head{display:flex;justify-content:space-between;align-items:end;gap:18px;margin-bottom:18px}
+.section-head h2{font-size:clamp(1.7rem,3vw,2.4rem);letter-spacing:-.035em;margin:5px 0}
+.section-head p{margin:0;color:var(--muted)}
+.kicker{font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;color:var(--primary);font-weight:900}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:var(--shadow)}
+.builder-grid{display:grid;grid-template-columns:300px minmax(0,1fr);gap:18px}
+.controls{display:flex;flex-direction:column;gap:16px}
+.field label{display:flex;justify-content:space-between;gap:10px;font-weight:800;margin-bottom:6px}
+.field output{color:var(--primary);font-weight:900}
+.field input[type=range]{width:100%;accent-color:var(--primary)}
+select,input[type=number]{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:11px;background:white;color:var(--ink);font:inherit}
+.field small,.muted{color:var(--muted)}
+.shape-tabs{display:flex;flex-wrap:wrap;gap:7px}
+.shape-chip{border:1px solid var(--line);background:#fff;padding:8px 11px;border-radius:10px;cursor:pointer;font-weight:750;color:var(--muted)}
+.shape-chip.selected{background:#eeeeff;border-color:#c7c9ff;color:var(--primary)}
+.drawing-wrap{display:grid;grid-template-columns:minmax(0,1fr) 240px;gap:16px;min-height:390px}
+.canvas-stage{min-height:350px;border-radius:16px;background:linear-gradient(#fafbff,#f1f4ff);border:1px solid var(--line);display:grid;place-items:center;overflow:hidden;padding:12px}
+.canvas-stage svg{width:100%;height:100%;max-height:410px;min-height:300px}
+.results{display:flex;flex-direction:column;gap:10px}
+.result-card{border:1px solid var(--line);border-radius:14px;padding:14px;background:#fbfcff}
+.result-card span{display:block;color:var(--muted);font-size:.82rem;font-weight:750}
+.result-card strong{font-size:1.4rem}
+.result-card small{display:block;color:var(--muted);margin-top:3px}
+.note{border-radius:12px;padding:12px 14px;background:#eefbf8;color:#176b61;font-size:.9rem}
+.shape-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.shape-card{background:white;border:1px solid var(--line);border-radius:17px;padding:16px;cursor:pointer;transition:.18s;text-align:left;color:var(--ink)}
+.shape-card:hover{border-color:#b8bbff;transform:translateY(-2px);box-shadow:var(--shadow)}
+.shape-card .emoji{font-size:1.8rem}
+.shape-card h3{margin:8px 0 4px}
+.shape-card p{margin:0;color:var(--muted);font-size:.9rem}
+.formula-tools{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.formula-tools select{width:auto;min-width:180px}
 .formula-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-.formula-card{padding:16px;background:var(--white);border:1px solid var(--line);border-radius:11px}
-.formula-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
-.formula-card h3{font-size:14px;margin:0}
-.grade-tag{background:var(--green);border-radius:5px;padding:4px 7px;font-size:10px;white-space:nowrap}
-.formula{font-family:Georgia,"Times New Roman",serif;font-size:23px;overflow-wrap:anywhere;padding:12px 0 5px}
-.formula-card p{font-size:12px;color:var(--muted);margin:0}
-.practice-layout{display:grid;grid-template-columns:minmax(0,1fr) 155px;gap:13px}
-.question-card{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:23px}
-.question-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:20px}
-.question-number{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-weight:800}
-.question-text{font-size:23px;font-weight:800;letter-spacing:-.5px;margin:0 0 20px}
-.answers{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.answer{
-  text-align:left;padding:12px;border:1px solid var(--line);border-radius:8px;
-  background:var(--paper);color:var(--ink)
+.formula{padding:17px;border:1px solid var(--line);border-radius:15px;background:white}
+.formula h3{margin:0 0 7px}
+.equation{display:inline-block;background:#f0f0ff;color:#373bb7;padding:7px 10px;border-radius:9px;font-weight:900;font-size:1.05rem;margin:3px 0 7px}
+.formula p{margin:5px 0;color:var(--muted);font-size:.93rem}
+.grade-pill{font-size:.75rem;font-weight:850;background:#e9faf6;color:#147b6e;padding:4px 8px;border-radius:999px}
+.practice-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.question{font-size:1.18rem;font-weight:850;margin:10px 0 16px}
+.answer-row{display:flex;gap:9px}
+.answer-row input{flex:1;min-width:0}
+.feedback{min-height:26px;font-weight:800;margin-top:12px}
+.correct{color:#12806f}
+.incorrect{color:#b84b37}
+.footer{border-top:1px solid var(--line);padding:25px 22px;color:var(--muted);text-align:center}
+.hidden{display:none!important}
+@media(max-width:900px){
+.hero{grid-template-columns:1fr}
+.hero-art{min-height:230px}
+.builder-grid{grid-template-columns:1fr}
+.controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+.drawing-wrap{grid-template-columns:1fr}
+.results{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+.shape-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
-.answer:hover:not(:disabled){border-color:var(--ink)}
-.answer:disabled{cursor:default}
-.answer.correct{background:var(--green);border-color:#64865b}
-.answer.wrong{background:var(--coral);border-color:#b56b55}
-.feedback{min-height:23px;margin:13px 0 9px;font-size:13px;font-weight:700}
-.practice-actions{display:flex;flex-wrap:wrap;gap:8px}
-.score-card{
-  background:var(--yellow);border:1px solid var(--ink);border-radius:14px;
-  padding:18px;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start
+@media(max-width:650px){
+.nav{padding:10px 14px;flex-wrap:wrap}
+.menuBtn{display:block}
+.navlinks{display:none;width:100%;flex-direction:column;align-items:stretch}
+.navlinks.open{display:flex}
+.navlinks a{padding:11px}
+.hero{padding-top:24px}
+.hero-art{min-height:190px}
+main{padding:18px 14px 50px}
+.stat-row{gap:8px}
+.stat{padding:12px}
+.stat strong{font-size:1.2rem}
+.controls,.formula-grid,.practice-grid{grid-template-columns:1fr}
+.shape-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.section-head{align-items:start;flex-direction:column}
+.results{grid-template-columns:repeat(2,minmax(0,1fr))}
+.panel{padding:14px}
 }
-.score-card strong{font-size:38px;letter-spacing:-2px}
-.score-card .btn{background:transparent;padding:7px 9px}
-footer{margin-top:25px;border-top:1px solid var(--line);padding:24px}
-.footer-inner{max-width:1100px;margin:auto;display:flex;justify-content:space-between;gap:12px;color:var(--muted);font-size:12px}
-@media(max-width:800px){
-  .hero{grid-template-columns:1fr;padding-top:48px}
-  .hero-art{min-height:220px}
-  .lab-grid{grid-template-columns:1fr}
-  .shape-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .viewer-top{align-items:flex-start;flex-direction:column}
-  .score-card{flex-direction:row;align-items:center;min-height:82px}
-}
-@media(max-width:500px){
-  nav{padding:15px 16px;align-items:flex-start;flex-direction:column}
-  .nav-links{gap:10px 15px}
-  main{padding:0 15px}
-  h1{letter-spacing:-2.5px}
-  #viewer{height:320px}
-  .formula-grid{grid-template-columns:1fr}
-  .practice-layout{grid-template-columns:1fr}
-  .question-card{padding:16px}
-  .question-text{font-size:20px}
-  .answers{grid-template-columns:1fr}
-}
+
+/* SEE THE MATH: area and perimeter styles */
+.vm-layout{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(280px,.9fr);gap:18px;align-items:stretch}
+.vm-switches{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.vm-switch{border:1px solid var(--line);background:#fff;color:var(--ink);padding:9px 12px;border-radius:10px;cursor:pointer;font:inherit;font-weight:800}
+.vm-switch.active{background:#eeeeff;border-color:#c7c9ff;color:var(--primary)}
+.vm-visual{min-height:320px;display:grid;place-items:center;overflow:hidden;border:1px solid var(--line);border-radius:16px;background-color:#fafbff;background-image:linear-gradient(#e5e8f5 1px,transparent 1px),linear-gradient(90deg,#e5e8f5 1px,transparent 1px);background-size:20px 20px;padding:8px}
+#vmDrawing{display:block;width:100%;max-height:350px}
+#vmDrawing text{font-family:system-ui,-apple-system,Segoe UI,Arial,sans-serif;fill:var(--ink);font-size:13px;font-weight:800}
+.vm-legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:12px;color:var(--muted);font-size:.85rem}
+.vm-legend span{display:inline-flex;align-items:center;gap:7px}
+.vm-dot{width:13px;height:13px;display:inline-block;border-radius:4px}
+.vm-dot-area{background:#bfe4b2}
+.vm-dot-perimeter{background:#f1a28d}
+.vm-side{display:flex;flex-direction:column;gap:15px}
+.vm-range label{display:flex;justify-content:space-between;gap:12px;font-weight:800;margin-bottom:6px}
+.vm-range output{color:var(--primary)}
+.vm-range input{width:100%;accent-color:var(--primary)}
+.vm-results{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.vm-result{padding:13px;border-radius:13px;min-width:0;color:var(--ink)}
+.vm-result-area{background:#d9edcf}
+.vm-result-perimeter{background:#f9ded5}
+.vm-result small{display:block;font-size:.76rem;font-weight:800;letter-spacing:.04em}
+.vm-result strong{display:block;font-size:1.55rem;overflow-wrap:anywhere;margin:3px 0}
+.vm-result .vm-unit{font-size:.78rem;font-weight:600}
+.vm-explain{padding:14px;border-radius:13px;background:#f3f4ff;border:1px solid #e2e4ff}
+.vm-explain h3{font-size:1rem;margin:0 0 5px}
+.vm-explain p{margin:5px 0;color:var(--muted);font-size:.92rem}
+.vm-equation{font-weight:900;color:#373bb7;font-size:1.05rem;overflow-wrap:anywhere}
+@media(max-width:800px){.vm-layout{grid-template-columns:1fr}}
+@media(max-width:500px){.vm-visual{min-height:260px}.vm-result strong{font-size:1.3rem}}
 </style>
-
-<script type="importmap">
-{
-  "imports": {
-    "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
-    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
-  }
-}
-</script>
 </head>
-
 <body>
-<nav>
-  <a class="logo" href="#">Geo<span>Lab</span>.</a>
-  <div class="nav-links">
-    <a href="#lab">3D Lab</a>
-    <a href="#shapes">Shapes</a>
-    <a href="#formulas">Formulas</a>
-    <a href="#practice">Practice</a>
-  </div>
-</nav>
-
-<main>
-<header class="hero">
-  <div>
-    <div class="kicker">Your geometry playground</div>
-    <h1>Math you can <em>move.</em></h1>
-    <p>Spin it. Zoom in. Figure it out.</p>
-    <a class="primary" href="#lab">Enter the 3D lab ↘</a>
-  </div>
-  <div class="hero-art">
-    <svg viewBox="0 0 340 230" aria-label="Geometric shapes">
-      <g stroke="#252b27" stroke-width="2.4" stroke-linejoin="round">
-        <path d="M65 72 L125 40 L185 72 L125 106 Z" fill="#fffef9"/>
-        <path d="M65 72 L65 140 L125 174 L125 106 Z" fill="#c9dfbd"/>
-        <path d="M125 106 L185 72 L185 140 L125 174 Z" fill="#8daf9e"/>
-        <circle cx="247" cy="72" r="31" fill="#f1c4b5"/>
-        <path d="M220 145 L274 145 L297 192 L197 192 Z" fill="#f2df9d"/>
-      </g>
-      <path d="M247 41 L247 103 M216 72 L278 72" stroke="#252b27" stroke-width="1.3" stroke-dasharray="4 4"/>
-    </svg>
-    <div class="hero-note">rotate to explore ✳</div>
-  </div>
+<header>
+  <nav class="nav" aria-label="Main navigation">
+    <a class="brand" href="#home"><span class="logo">∠</span><span>GeoLab</span></a>
+    <button class="menuBtn" id="menuBtn" aria-expanded="false" aria-controls="navlinks">☰ Menu</button>
+    <div class="navlinks" id="navlinks">
+      <a href="#builder">Geometry Builder</a>
+      <a href="#visual-math">See the Math</a>
+      <a href="#shapes">Shape Explorer</a>
+      <a href="#formulas">Formula Library</a>
+      <a href="#practice">Practice</a>
+    </div>
+  </nav>
 </header>
-
-<section class="section" id="lab">
-  <div class="section-heading">
-    <div><div class="kicker">01 / Interactive</div><h2>3D shape lab</h2></div>
+<main id="home">
+  <div class="hero">
+    <div>
+      <span class="eyebrow">Grades 4–8 · Learn by exploring</span>
+      <h1>Geometry clicks when you can <span class="gradient">play with it.</span></h1>
+      <p>Build shapes, change their dimensions, discover formulas, and test your understanding — all in one interactive geometry lab.</p>
+      <div class="hero-actions"><a class="btn" href="#builder">✦ Open Geometry Builder</a><a class="btn secondary" href="#formulas">Explore formulas ↓</a></div>
+    </div>
+    <div class="hero-art" aria-label="Decorative geometry illustration">
+      <svg viewBox="0 0 400 300" role="img" aria-label="Colorful geometric shapes">
+        <circle cx="285" cy="77" r="51" fill="#ffbe75" stroke="#f28c43" stroke-width="4"/>
+        <rect x="49" y="127" width="112" height="112" rx="9" fill="#777bff" stroke="#5458e8" stroke-width="4" transform="rotate(-9 105 183)"/>
+        <path d="M195 231 L260 118 L325 231 Z" fill="#31c8b5" stroke="#149d90" stroke-width="4" stroke-linejoin="round"/>
+        <path d="M80 69 L111 38 L142 69 L111 100 Z" fill="#f28cc9" stroke="#d866a8" stroke-width="4"/>
+        <path d="M191 43 L208 52 L208 72 L191 81 L174 72 L174 52 Z" fill="#fff" stroke="#8a8ef5" stroke-width="4"/>
+        <path d="M263 250 Q290 263 315 248" fill="none" stroke="#5458e8" stroke-width="5" stroke-linecap="round"/>
+      </svg>
+    </div>
+  </div>
+  <div class="stat-row">
+    <div class="stat"><strong>8+</strong><span>Interactive 2D shapes</span></div>
+    <div class="stat"><strong>7</strong><span>3D solids to explore</span></div>
+    <div class="stat"><strong>4–8</strong><span>Grade-based formula guide</span></div>
   </div>
 
-  <div class="lab-grid">
-    <div class="panel viewer-panel">
-      <div class="viewer-top">
-        <strong id="viewerTitle">Cube</strong>
-        <div class="viewer-buttons">
-          <button class="btn" id="pauseRotation" type="button">Pause spin</button>
-          <button class="btn" id="resetView" type="button">Reset view ↺</button>
+  <section id="builder">
+    <div class="section-head"><div><span class="kicker">01 · Main feature</span><h2>Interactive Geometry Builder</h2><p>Pick a shape, adjust its dimensions, and see the math update instantly.</p></div></div>
+    <div class="panel builder-grid">
+      <div class="controls">
+        <div class="field"><label for="shapeSelect">Choose a shape</label><select id="shapeSelect">
+          <optgroup label="2D shapes"><option value="rectangle">Rectangle</option><option value="square">Square</option><option value="triangle">Triangle</option><option value="parallelogram">Parallelogram</option><option value="trapezoid">Trapezoid</option><option value="rhombus">Rhombus</option><option value="circle">Circle</option><option value="hexagon">Regular hexagon</option></optgroup>
+          <optgroup label="3D shapes"><option value="cube">Cube</option><option value="prism">Rectangular prism</option><option value="cylinder">Cylinder</option><option value="cone">Cone</option><option value="sphere">Sphere</option><option value="pyramid">Square pyramid</option></optgroup>
+        </select></div>
+        <div class="shape-tabs" id="shapeTabs">
+          <button class="shape-chip selected" data-shape="rectangle">Rectangle</button>
+          <button class="shape-chip" data-shape="circle">Circle</button>
+          <button class="shape-chip" data-shape="triangle">Triangle</button>
+          <button class="shape-chip" data-shape="cube">Cube</button>
+        </div>
+        <div id="dimensionControls"></div>
+        <div class="note" id="builderHint">Tip: change a slider to see how the dimensions affect the result.</div>
+      </div>
+      <div class="drawing-wrap">
+        <div class="canvas-stage" id="drawing" aria-label="Live shape diagram"></div>
+        <div class="results" id="results" aria-live="polite"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NEW SECTION: AREA AND PERIMETER VISUAL EXPLORER -->
+  <section id="visual-math">
+    <div class="section-head">
+      <div>
+        <span class="kicker">02 · Understand visually</span>
+        <h2>See the Math: Area &amp; Perimeter</h2>
+        <p>Change the measurements and watch the shaded area and highlighted outside edge update.</p>
+      </div>
+    </div>
+    <div class="vm-layout">
+      <div class="panel">
+        <div class="vm-switches" role="group" aria-label="Choose a shape">
+          <button type="button" class="vm-switch active" data-vm-shape="rectangle" aria-pressed="true">Rectangle</button>
+          <button type="button" class="vm-switch" data-vm-shape="square" aria-pressed="false">Square</button>
+          <button type="button" class="vm-switch" data-vm-shape="triangle" aria-pressed="false">Triangle</button>
+        </div>
+        <div class="vm-visual">
+          <svg id="vmDrawing" viewBox="0 0 360 270" role="img" aria-label="Shaded geometry diagram"></svg>
+        </div>
+        <div class="vm-legend">
+          <span><i class="vm-dot vm-dot-area"></i> Shaded inside = area</span>
+          <span><i class="vm-dot vm-dot-perimeter"></i> Coloured edge = perimeter</span>
         </div>
       </div>
-      <div id="viewer">
-        <div class="viewer-help">Drag to rotate · Scroll to zoom</div>
-        <div class="viewer-error" id="viewerError">
-          <div>
-            <strong>3D viewer couldn't load</strong>
-            <p>Check your internet connection and reload the page. The rest of GeoLab should still work.</p>
+      <div class="panel vm-side">
+        <h3 style="margin:0">Explore the dimensions</h3>
+        <div class="vm-range">
+          <label for="vmLength"><span id="vmLengthLabel">Length</span><output id="vmLengthValue">8</output></label>
+          <input id="vmLength" type="range" min="2" max="12" value="8" step="1">
+        </div>
+        <div class="vm-range" id="vmWidthControl">
+          <label for="vmWidth"><span id="vmWidthLabel">Width</span><output id="vmWidthValue">4</output></label>
+          <input id="vmWidth" type="range" min="2" max="10" value="4" step="1">
+        </div>
+        <div class="vm-results" aria-live="polite">
+          <div class="vm-result vm-result-area">
+            <small>AREA</small><strong id="vmArea">32</strong><span class="vm-unit">square units</span>
+          </div>
+          <div class="vm-result vm-result-perimeter">
+            <small>PERIMETER</small><strong id="vmPerimeter">24</strong><span class="vm-unit">units around</span>
           </div>
         </div>
+        <div class="vm-explain">
+          <h3>What is area?</h3>
+          <p>Area measures how much flat space is inside a shape. The green shading represents that space.</p>
+          <p class="vm-equation" id="vmAreaFormula">8 × 4 = 32</p>
+          <p id="vmAreaMeaning">The shape covers 32 square units.</p>
+        </div>
+        <div class="vm-explain">
+          <h3>What is perimeter?</h3>
+          <p>Perimeter is the total distance around the outside edge — like the length of a fence around a yard.</p>
+          <p class="vm-equation" id="vmPerimeterFormula">8 + 4 + 8 + 4 = 24</p>
+          <p id="vmPerimeterMeaning">The distance around is 24 units.</p>
+        </div>
+        <button type="button" class="btn secondary" id="vmReset">Reset example ↺</button>
       </div>
     </div>
+  </section>
+  <!-- END NEW SECTION -->
 
-    <div class="panel controls">
-      <div class="control">
-        <label for="shapeSelect">Shape</label>
-        <select id="shapeSelect">
-          <option value="cube">Cube</option>
-          <option value="box">Rectangular prism</option>
-          <option value="sphere">Sphere</option>
-          <option value="cylinder">Cylinder</option>
-          <option value="cone">Cone</option>
-          <option value="triPrism">Triangular prism</option>
-          <option value="pyramid">Square pyramid</option>
-        </select>
-      </div>
-
-      <div class="control" id="controlA">
-        <label for="sliderA"><span id="labelA">Side length</span><output id="valueA">4</output></label>
-        <input id="sliderA" type="range" min="1" max="8" step=".5" value="4">
-      </div>
-      <div class="control" id="controlB">
-        <label for="sliderB"><span id="labelB">Width</span><output id="valueB">3</output></label>
-        <input id="sliderB" type="range" min="1" max="8" step=".5" value="3">
-      </div>
-      <div class="control" id="controlC">
-        <label for="sliderC"><span id="labelC">Height</span><output id="valueC">3</output></label>
-        <input id="sliderC" type="range" min="1" max="8" step=".5" value="3">
-      </div>
-
-      <div class="measure-grid">
-        <div class="measure"><small>Volume</small><strong id="volume">64</strong></div>
-        <div class="measure"><small>Surface area</small><strong id="surface">96</strong></div>
-        <div class="measure measure-wide"><small>Selected shape</small><strong id="shapeSummary">Cube</strong></div>
-      </div>
-      <button class="btn" id="resetDimensions" type="button">Reset dimensions ↺</button>
+  <section id="shapes">
+    <div class="section-head"><div><span class="kicker">03 · Explore</span><h2>Shape Explorer</h2><p>Choose any card to load that shape into the builder.</p></div></div>
+    <div class="shape-grid" id="shapeGrid">
+      <button class="shape-card" data-shape="square"><span class="emoji">🟪</span><h3>Square</h3><p>Four equal sides and four right angles.</p></button>
+      <button class="shape-card" data-shape="rectangle"><span class="emoji">▰</span><h3>Rectangle</h3><p>Opposite sides equal; four right angles.</p></button>
+      <button class="shape-card" data-shape="triangle"><span class="emoji">🔺</span><h3>Triangle</h3><p>Three sides; area uses base and height.</p></button>
+      <button class="shape-card" data-shape="parallelogram"><span class="emoji">▱</span><h3>Parallelogram</h3><p>Opposite sides are parallel.</p></button>
+      <button class="shape-card" data-shape="trapezoid"><span class="emoji">⏢</span><h3>Trapezoid</h3><p>One pair of parallel sides.</p></button>
+      <button class="shape-card" data-shape="rhombus"><span class="emoji">◇</span><h3>Rhombus</h3><p>Four equal sides; diagonals cross.</p></button>
+      <button class="shape-card" data-shape="circle"><span class="emoji">⚪</span><h3>Circle</h3><p>Radius reaches from center to edge.</p></button>
+      <button class="shape-card" data-shape="hexagon"><span class="emoji">⬡</span><h3>Regular hexagon</h3><p>Six equal sides and six equal angles.</p></button>
+      <button class="shape-card" data-shape="cube"><span class="emoji">🧊</span><h3>Cube</h3><p>Six equal square faces.</p></button>
+      <button class="shape-card" data-shape="prism"><span class="emoji">📦</span><h3>Rectangular prism</h3><p>Length, width, and height.</p></button>
+      <button class="shape-card" data-shape="cylinder"><span class="emoji">🥫</span><h3>Cylinder</h3><p>Two circular bases and one curved surface.</p></button>
+      <button class="shape-card" data-shape="cone"><span class="emoji">🍦</span><h3>Cone</h3><p>A circular base that narrows to a point.</p></button>
+      <button class="shape-card" data-shape="sphere"><span class="emoji">⚽</span><h3>Sphere</h3><p>Every point on the surface is equally far from its center.</p></button>
+      <button class="shape-card" data-shape="pyramid"><span class="emoji">🔻</span><h3>Square pyramid</h3><p>A square base and four triangular faces.</p></button>
     </div>
-  </div>
-</section>
+  </section>
 
-<section class="section" id="shapes">
-  <div class="section-heading">
-    <div><div class="kicker">02 / Choose</div><h2>Shape collection</h2></div>
-  </div>
-
-  <div class="shape-grid">
-    <button class="shape-card active" data-shape="cube" type="button">
-      <div class="shape-art" style="background:#c9dfbd">
-        <svg viewBox="0 0 100 85"><g stroke="#252b27" stroke-width="2" stroke-linejoin="round"><path d="M15 28 L49 10 L84 28 L49 47 Z" fill="#fffef9"/><path d="M15 28 L15 62 L49 80 L49 47 Z" fill="#b6d0aa"/><path d="M49 47 L84 28 L84 62 L49 80 Z" fill="#8daf9e"/></g></svg>
-      </div><strong>Cube</strong><small>6 equal faces</small>
-    </button>
-
-    <button class="shape-card" data-shape="box" type="button">
-      <div class="shape-art" style="background:#cbdff0">
-        <svg viewBox="0 0 100 85"><g stroke="#252b27" stroke-width="2" stroke-linejoin="round"><path d="M13 28 L43 12 L88 27 L57 44 Z" fill="#fffef9"/><path d="M13 28 L13 61 L57 78 L57 44 Z" fill="#b2cce1"/><path d="M57 44 L88 27 L88 60 L57 78 Z" fill="#91b2d0"/></g></svg>
-      </div><strong>Rectangular prism</strong><small>6 rectangular faces</small>
-    </button>
-
-    <button class="shape-card" data-shape="sphere" type="button">
-      <div class="shape-art" style="background:#f1c4b5">
-        <svg viewBox="0 0 100 85"><defs><radialGradient id="ball" cx="30%" cy="25%"><stop offset="0" stop-color="#fffef9"/><stop offset="1" stop-color="#d38f7a"/></radialGradient></defs><circle cx="50" cy="42" r="31" fill="url(#ball)" stroke="#252b27" stroke-width="2"/></svg>
-      </div><strong>Sphere</strong><small>One curved surface</small>
-    </button>
-
-    <button class="shape-card" data-shape="cylinder" type="button">
-      <div class="shape-art" style="background:#f2df9d">
-        <svg viewBox="0 0 100 85"><g stroke="#252b27" stroke-width="2"><path d="M24 22 C24 8 76 8 76 22 L76 64 C76 78 24 78 24 64 Z" fill="#e8d18c"/><ellipse cx="50" cy="22" rx="26" ry="10" fill="#fffef9"/><path d="M24 64 C24 78 76 78 76 64" fill="none"/></g></svg>
-      </div><strong>Cylinder</strong><small>Two circular faces</small>
-    </button>
-
-    <button class="shape-card" data-shape="cone" type="button">
-      <div class="shape-art" style="background:#cbdff0">
-        <svg viewBox="0 0 100 85"><g stroke="#252b27" stroke-width="2" stroke-linejoin="round"><path d="M50 10 L19 68 C19 83 81 83 81 68 Z" fill="#a8c7e2"/><ellipse cx="50" cy="68" rx="31" ry="10" fill="#fffef9"/></g></svg>
-      </div><strong>Cone</strong><small>One circular base</small>
-    </button>
-
-    <button class="shape-card" data-shape="triPrism" type="button">
-      <div class="shape-art" style="background:#c9dfbd">
-        <svg viewBox="0 0 100 85"><g stroke="#252b27" stroke-width="2" stroke-linejoin="round"><path d="M12 63 L34 18 L57 63 Z" fill="#fffef9"/><path d="M34 18 L67 8 L89 51 L57 63 Z" fill="#a8c79b"/><path d="M57 63 L89 51 L89 69 L57 80 Z" fill="#85a97b"/><path d="M12 63 L45 51 L89 51" fill="none" stroke-dasharray="3 3"/></g></svg>
-      </div><strong>Triangular prism</strong><small>Two triangle faces</small>
-    </button>
-
-    <button class="shape-card" data-shape="pyramid" type="button">
-      <div class="shape-art" style="background:#f1c4b5">
-        <svg viewBox="0 0 100 85"><g stroke="#252b27" stroke-width="2" stroke-linejoin="round"><path d="M50 9 L14 65 L51 79 L87 65 Z" fill="#e9a995"/><path d="M50 9 L51 79 L14 65 Z" fill="#fffef9"/><path d="M50 9 L87 65 L51 79" fill="#d98f79"/></g></svg>
-      </div><strong>Square pyramid</strong><small>One square base</small>
-    </button>
-  </div>
-</section>
-
-<section class="section" id="formulas">
-  <div class="section-heading">
-    <div><div class="kicker">03 / Reference</div><h2>Formula library</h2></div>
-  </div>
-  <div class="filters" id="formulaFilters">
-    <button class="filter active" data-grade="all" type="button">All</button>
-    <button class="filter" data-grade="4-6" type="button">Grades 4–6</button>
-    <button class="filter" data-grade="7-8" type="button">Grades 7–8</button>
-    <button class="filter" data-grade="9-10" type="button">Grades 9–10</button>
-    <button class="filter" data-grade="11-12" type="button">Grades 11–12</button>
-  </div>
-  <div class="formula-grid" id="formulaGrid"></div>
-</section>
-
-<section class="section" id="practice">
-  <div class="section-heading">
-    <div><div class="kicker">04 / Practice</div><h2>Practice</h2></div>
-  </div>
-  <div class="practice-layout">
-    <div class="question-card">
-      <div class="question-top">
-        <span class="question-number" id="questionNumber">QUESTION 1</span>
-        <span class="grade-tag" id="questionGrade">Grades 4–6</span>
-      </div>
-      <p class="question-text" id="questionText"></p>
-      <div class="answers" id="answerOptions"></div>
-      <div class="feedback" id="feedback" aria-live="polite"></div>
-      <div class="practice-actions">
-        <button class="primary" id="nextQuestion" type="button">Next →</button>
-        <button class="btn" id="showHint" type="button">Hint</button>
-      </div>
+  <section id="formulas">
+    <div class="section-head"><div><span class="kicker">04 · Keep handy</span><h2>Grade-by-Grade Formula Library</h2><p>Curricula vary by province and school, so these are typical learning progressions, not official grade requirements.</p></div></div>
+    <div class="panel">
+      <div class="formula-tools"><label class="hidden" for="gradeFilter">Filter formulas by grade</label><select id="gradeFilter"><option value="all">All grades (4–8)</option><option value="4">Grade 4</option><option value="5">Grade 5</option><option value="6">Grade 6</option><option value="7">Grade 7</option><option value="8">Grade 8</option></select><input id="formulaSearch" placeholder="Search e.g. circle, area, volume…" aria-label="Search formulas"></div>
+      <div class="formula-grid" id="formulaGrid"></div>
     </div>
-    <aside class="score-card">
-      <strong id="score">0/0</strong>
-      <button class="btn" id="resetQuiz" type="button">Reset ↺</button>
-    </aside>
-  </div>
-</section>
+  </section>
+
+  <section id="practice">
+    <div class="section-head"><div><span class="kicker">05 · Check your understanding</span><h2>Quick Practice</h2><p>Try a question, check your answer, and get a short explanation.</p></div></div>
+    <div class="practice-grid">
+      <div class="panel"><span class="grade-pill" id="questionTag">Question 1</span><div class="question" id="questionText">What is the area of a rectangle with length 8 cm and width 3 cm?</div><div class="answer-row"><input id="answerInput" type="number" step="any" placeholder="Your answer" aria-label="Your numeric answer"><button class="btn" id="checkAnswer">Check</button></div><div class="feedback" id="feedback" aria-live="polite"></div><button class="btn secondary" id="nextQuestion">Next question →</button></div>
+      <div class="panel"><h3>Remember the difference</h3><p><strong>Perimeter</strong> is the distance around a 2D shape. Think of a fence.</p><p><strong>Area</strong> is the amount of flat space inside a 2D shape. Think of carpet.</p><p><strong>Volume</strong> is the space inside a 3D object. Think of how much a box can hold.</p><div class="note">Always include units: cm for length, cm² for area, and cm³ for volume.</div></div>
+    </div>
+  </section>
 </main>
-
-<footer><div class="footer-inner"><span>GeoLab © 2026</span><span>Grades 4–12</span></div></footer>
+<footer class="footer">GeoLab · Explore, build, and understand geometry. <br><small>Learning resource for Grades 4–8. Check your teacher’s instructions for the formulas required in your class.</small></footer>
 
 <script>
-/* Formula library */
-const formulas = [
-  {name:"Rectangle area",f:"A = l × w",note:"Length times width.",g:"4-6"},
-  {name:"Rectangle perimeter",f:"P = 2(l + w)",note:"Add all four sides.",g:"4-6"},
-  {name:"Square area",f:"A = s²",note:"Side times side.",g:"4-6"},
-  {name:"Triangle area",f:"A = ½bh",note:"Base times height divided by 2.",g:"4-6"},
-  {name:"Rectangular prism volume",f:"V = lwh",note:"Length × width × height.",g:"7-8"},
-  {name:"Cube volume",f:"V = s³",note:"Side length cubed.",g:"7-8"},
-  {name:"Cube surface area",f:"SA = 6s²",note:"Six equal square faces.",g:"7-8"},
-  {name:"Circle area",f:"A = πr²",note:"Pi times radius squared.",g:"7-8"},
-  {name:"Circle circumference",f:"C = 2πr",note:"Distance around a circle.",g:"7-8"},
-  {name:"Cylinder volume",f:"V = πr²h",note:"Circle area times height.",g:"7-8"},
-  {name:"Pythagorean theorem",f:"a² + b² = c²",note:"For right triangles.",g:"7-8"},
-  {name:"Triangle angle sum",f:"A + B + C = 180°",note:"Interior angles of a triangle.",g:"7-8"},
-  {name:"Polygon angle sum",f:"(n − 2) × 180°",note:"Interior angle sum for n sides.",g:"9-10"},
-  {name:"Slope",f:"m = (y₂ − y₁)/(x₂ − x₁)",note:"Rise divided by run.",g:"9-10"},
-  {name:"Midpoint",f:"((x₁+x₂)/2, (y₁+y₂)/2)",note:"Average both coordinates.",g:"9-10"},
-  {name:"Distance",f:"d = √((x₂−x₁)² + (y₂−y₁)²)",note:"Distance between two points.",g:"9-10"},
-  {name:"Straight line",f:"y = mx + b",note:"m is slope; b is y-intercept.",g:"9-10"},
-  {name:"Quadratic formula",f:"x = (−b ± √(b²−4ac))/(2a)",note:"Solves ax² + bx + c = 0.",g:"11-12"},
-  {name:"Sine",f:"sin θ = opp./hyp.",note:"SOH in SOH-CAH-TOA.",g:"11-12"},
-  {name:"Cosine",f:"cos θ = adj./hyp.",note:"CAH in SOH-CAH-TOA.",g:"11-12"},
-  {name:"Sine law",f:"a/sin A = b/sin B",note:"For any triangle.",g:"11-12"},
-  {name:"Derivative power rule",f:"d(xⁿ)/dx = nxⁿ⁻¹",note:"Multiply by the power, then reduce it by one.",g:"11-12"}
-];
-const gradeNames={"4-6":"Grades 4–6","7-8":"Grades 7–8","9-10":"Grades 9–10","11-12":"Grades 11–12"};
-function renderFormulas(filter="all"){
-  const grid=document.getElementById("formulaGrid");
-  grid.innerHTML=formulas.filter(x=>filter==="all"||x.g===filter).map(x=>
-    `<article class="formula-card"><div class="formula-top"><h3>${x.name}</h3><span class="grade-tag">${gradeNames[x.g]}</span></div><div class="formula">${x.f}</div><p>${x.note}</p></article>`
-  ).join("");
-}
-document.querySelectorAll(".filter").forEach(btn=>btn.addEventListener("click",()=>{
-  document.querySelectorAll(".filter").forEach(b=>b.classList.remove("active"));
-  btn.classList.add("active");renderFormulas(btn.dataset.grade);
-}));
-renderFormulas();
+const $ = id => document.getElementById(id);
+const configs = {
+ rectangle:{label:"Rectangle",dims:[["length","Length",8,1,20],["width","Width",4,1,15]],type:"2d"},
+ square:{label:"Square",dims:[["side","Side length",5,1,15]],type:"2d"},
+ triangle:{label:"Triangle",dims:[["base","Base",8,2,16],["height","Height",5,1,12],["side","Other side (isosceles)",6,2,16]],type:"2d"},
+ parallelogram:{label:"Parallelogram",dims:[["base","Base",8,2,16],["height","Perpendicular height",5,1,12],["side","Slanted side",6,2,16]],type:"2d"},
+ trapezoid:{label:"Trapezoid",dims:[["a","Top base",5,2,14],["b","Bottom base",10,3,18],["height","Height",5,1,12],["side","Side length (approx.)",6,2,14]],type:"2d"},
+ rhombus:{label:"Rhombus",dims:[["side","Side length",6,2,12],["d1","Diagonal 1",8,2,16],["d2","Diagonal 2",6,2,14]],type:"2d"},
+ circle:{label:"Circle",dims:[["radius","Radius",5,1,12]],type:"2d"},
+ hexagon:{label:"Regular hexagon",dims:[["side","Side length",4,1,10]],type:"2d"},
+ cube:{label:"Cube",dims:[["side","Edge length",4,1,10]],type:"3d"},
+ prism:{label:"Rectangular prism",dims:[["length","Length",6,1,14],["width","Width",4,1,12],["height","Height",3,1,10]],type:"3d"},
+ cylinder:{label:"Cylinder",dims:[["radius","Radius",3,1,8],["height","Height",7,1,14]],type:"3d"},
+ cone:{label:"Cone",dims:[["radius","Radius",3,1,8],["height","Height",6,1,14]],type:"3d"},
+ sphere:{label:"Sphere",dims:[["radius","Radius",4,1,9]],type:"3d"},
+ pyramid:{label:"Square pyramid",dims:[["side","Base side",5,1,10],["height","Vertical height",6,1,12]],type:"3d"}
+};
+let current="rectangle";
+const val = key => Number($("dim_"+key)?.value || 1);
+const fmt = n => Number.isFinite(n) ? (Math.round(n*100)/100).toLocaleString(undefined,{maximumFractionDigits:2}) : "—";
+function setShape(shape){if(!configs[shape])return;current=shape;$("shapeSelect").value=shape;document.querySelectorAll(".shape-chip").forEach(b=>b.classList.toggle("selected",b.dataset.shape===shape));renderControls();updateBuilder();$("builderHint").textContent=configs[shape].type==="3d"?"3D model is a schematic illustration; formulas calculate the solid's measurements.":"Diagram is schematic. Measurements and calculations update with your dimensions."}
+function renderControls(){const c=configs[current];$("dimensionControls").innerHTML=c.dims.map(([key,label,def,min,max])=>`<div class="field"><label for="dim_${key}">${label}<output id="out_${key}">${def} units</output></label><input id="dim_${key}" type="range" min="${min}" max="${max}" value="${def}" step="1" data-key="${key}"><small>Range: ${min}–${max} units</small></div>`).join("");c.dims.forEach(([key])=>{$("dim_"+key).addEventListener("input",updateBuilder)})}
+function calculate(){const s=current;let a={},results=[];const add=(label,n,unit,explain="")=>results.push({label,value:fmt(n),unit,explain});
+if(s==="rectangle"){let l=val("length"),w=val("width");add("Area",l*w,"units²","length × width");add("Perimeter",2*(l+w),"units","2 × (length + width)")}
+if(s==="square"){let x=val("side");add("Area",x*x,"units²","side × side");add("Perimeter",4*x,"units","4 × side")}
+if(s==="triangle"){let b=val("base"),h=val("height"),x=val("side");add("Area",b*h/2,"units²","(base × height) ÷ 2");add("Perimeter",b+2*x,"units","base + two equal sides")}
+if(s==="parallelogram"){let b=val("base"),h=val("height"),x=val("side");add("Area",b*h,"units²","base × perpendicular height");add("Perimeter",2*(b+x),"units","2 × (base + side)")}
+if(s==="trapezoid"){let a=val("a"),b=val("b"),h=val("height"),x=val("side");add("Area",(a+b)*h/2,"units²","(top base + bottom base) × height ÷ 2");add("Perimeter",a+b+2*x,"units","Approximation: bases + two equal sides")}
+if(s==="rhombus"){let x=val("side"),d1=val("d1"),d2=val("d2");add("Area",d1*d2/2,"units²","(diagonal 1 × diagonal 2) ÷ 2");add("Perimeter",4*x,"units","4 × side")}
+if(s==="circle"){let r=val("radius");add("Area",Math.PI*r*r,"units²","π × radius²");add("Circumference",2*Math.PI*r,"units","2 × π × radius")}
+if(s==="hexagon"){let x=val("side");add("Perimeter",6*x,"units","6 × side");add("Area",(3*Math.sqrt(3)/2)*x*x,"units²","(3√3 ÷ 2) × side²")}
+if(s==="cube"){let x=val("side");add("Volume",x**3,"units³","side³");add("Surface area",6*x*x,"units²","6 × side²")}
+if(s==="prism"){let l=val("length"),w=val("width"),h=val("height");add("Volume",l*w*h,"units³","length × width × height");add("Surface area",2*(l*w+l*h+w*h),"units²","2(lw + lh + wh)")}
+if(s==="cylinder"){let r=val("radius"),h=val("height");add("Volume",Math.PI*r*r*h,"units³","π × radius² × height");add("Total surface area",2*Math.PI*r*(r+h),"units²","2πr² + 2πrh")}
+if(s==="cone"){let r=val("radius"),h=val("height"),slant=Math.sqrt(r*r+h*h);add("Volume",Math.PI*r*r*h/3,"units³","π × radius² × height ÷ 3");add("Slant height",slant,"units","√(radius² + height²)");add("Surface area",Math.PI*r*(r+slant),"units²","πr² + πr × slant height")}
+if(s==="sphere"){let r=val("radius");add("Volume",4*Math.PI*r**3/3,"units³","(4 ÷ 3) × π × radius³");add("Surface area",4*Math.PI*r*r,"units²","4 × π × radius²")}
+if(s==="pyramid"){let x=val("side"),h=val("height"),slant=Math.sqrt(h*h+(x/2)**2);add("Volume",x*x*h/3,"units³","base area × height ÷ 3");add("Slant height",slant,"units","For a square pyramid, using half the base side");add("Surface area",x*x+2*x*slant,"units²","base area + four triangular faces")}
+return results}
+function svgWrap(inner){return `<svg viewBox="0 0 440 330" role="img" aria-label="${configs[current].label} diagram">${inner}</svg>`}
+function diagram(){let s=current, c="#777bff",stroke="#4549c9",fill="#dfe0ff",t="";
+const text=(x,y,txt)=>`<text x="${x}" y="${y}" fill="#343a65" font-size="15" font-weight="700" text-anchor="middle">${txt}</text>`;
+const line=(x1,y1,x2,y2)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#f09b46" stroke-width="3" stroke-linecap="round"/>`;
+if(s==="rectangle"){t=`<rect x="90" y="70" width="260" height="165" rx="4" fill="${fill}" stroke="${stroke}" stroke-width="4"/>${text(220,58,val("length")+" units")}${text(383,158,val("width")+" units")}`}
+if(s==="square"){t=`<rect x="115" y="55" width="210" height="210" rx="4" fill="${fill}" stroke="${stroke}" stroke-width="4"/>${text(220,43,val("side")+" units")}${text(362,163,val("side")+" units")}`}
+if(s==="triangle"){t=`<path d="M220 55 L90 260 L350 260 Z" fill="${fill}" stroke="${stroke}" stroke-width="4" stroke-linejoin="round"/>${line(220,55,220,260)}${text(238,170,val("height")+" units")}${text(220,292,val("base")+" units")}`}
+if(s==="parallelogram"){t=`<path d="M150 70 L365 70 L290 250 L75 250 Z" fill="${fill}" stroke="${stroke}" stroke-width="4"/>${line(150,70,150,250)}${text(257,54,val("base")+" units")}${text(167,165,val("height")+" units")}`}
+if(s==="trapezoid"){t=`<path d="M150 80 L290 80 L365 250 L75 250 Z" fill="${fill}" stroke="${stroke}" stroke-width="4"/>${line(150,80,150,250)}${text(220,62,val("a")+" units")}${text(220,282,val("b")+" units")}${text(166,165,val("height"))}`}
+if(s==="rhombus"){t=`<path d="M220 45 L360 165 L220 285 L80 165 Z" fill="${fill}" stroke="${stroke}" stroke-width="4"/>${line(80,165,360,165)}${line(220,45,220,285)}${text(220,185,val("d1")+" units")}${text(244,145,val("d2")+" units")}`}
+if(s==="circle"){t=`<circle cx="220" cy="165" r="105" fill="${fill}" stroke="${stroke}" stroke-width="4"/>${line(220,165,325,165)}<circle cx="220" cy="165" r="4" fill="${stroke}"/>${text(276,150,"r = "+val("radius"))}`}
+if(s==="hexagon"){t=`<polygon points="220,55 315,110 315,220 220,275 125,220 125,110" fill="${fill}" stroke="${stroke}" stroke-width="4"/>${text(220,43,val("side")+" units")}`}
+if(s==="cube"){t=`<path d="M110 105 L265 105 L265 255 L110 255 Z M110 105 L175 55 L330 55 L265 105 M265 255 L330 205 L330 55 M110 255 L175 205 L330 205 M175 55 L175 205" fill="${fill}" fill-opacity=".8" stroke="${stroke}" stroke-width="4" stroke-linejoin="round"/>${text(190,92,val("side")+" units")}`}
+if(s==="prism"){t=`<path d="M85 110 L270 110 L270 245 L85 245 Z M85 110 L145 65 L330 65 L270 110 M270 245 L330 200 L330 65 M85 245 L145 200 L330 200 M145 65 L145 200" fill="${fill}" fill-opacity=".8" stroke="${stroke}" stroke-width="4" stroke-linejoin="round"/>${text(178,96,val("length"))}${text(300,265,val("height"))}${text(113,180,val("width"))}`}
+if(s==="cylinder"){t=`<path d="M105 85 C105 35 335 35 335 85 L335 245 C335 295 105 295 105 245 Z" fill="${fill}" stroke="${stroke}" stroke-width="4"/><ellipse cx="220" cy="85" rx="115" ry="43" fill="#eeeeff" stroke="${stroke}" stroke-width="4"/><path d="M105 245 C105 195 335 195 335 245" fill="none" stroke="${stroke}" stroke-width="3" stroke-dasharray="7 6"/>${line(220,85,335,85)}${text(280,70,"r="+val("radius"))}${text(365,172,"h="+val("height"))}`}
+if(s==="cone"){t=`<path d="M220 48 L95 250 C95 295 345 295 345 250 Z" fill="${fill}" stroke="${stroke}" stroke-width="4"/><ellipse cx="220" cy="250" rx="125" ry="43" fill="#eeeeff" stroke="${stroke}" stroke-width="4"/><path d="M220 48 L220 250" stroke="${stroke}" stroke-width="2" stroke-dasharray="7 6"/>${line(220,250,345,250)}${text(285,236,"r="+val("radius"))}${text(240,150,"h="+val("height"))}`}
+if(s==="sphere"){t=`<circle cx="220" cy="165" r="112" fill="${fill}" stroke="${stroke}" stroke-width="4"/><ellipse cx="220" cy="165" rx="112" ry="38" fill="none" stroke="${stroke}" stroke-width="3"/><path d="M220 53 C160 85 160 245 220 277 M220 53 C280 85 280 245 220 277" fill="none" stroke="${stroke}" stroke-width="2" opacity=".65"/>${line(220,165,332,165)}<circle cx="220" cy="165" r="4" fill="${stroke}"/>${text(276,150,"r="+val("radius"))}`}
+if(s==="pyramid"){t=`<path d="M220 45 L85 245 L220 285 L355 245 Z M220 45 L220 285 M220 45 L85 245 M220 45 L355 245" fill="${fill}" fill-opacity=".85" stroke="${stroke}" stroke-width="4" stroke-linejoin="round"/>${line(220,165,220,285)}${text(240,205,"h="+val("height"))}${text(220,310,val("side")+" units")}`}
+return svgWrap(t)}
+function updateBuilder(){const c=configs[current];c.dims.forEach(([key,label])=>{const out=$("out_"+key),input=$("dim_"+key);if(out&&input)out.textContent=input.value+" units"});$("drawing").innerHTML=diagram();$("results").innerHTML=calculate().map(r=>`<div class="result-card"><span>${r.label}</span><strong>${r.value} ${r.unit}</strong><small>${r.explain}</small></div>`).join("")}
+document.querySelectorAll("[data-shape]").forEach(el=>el.addEventListener("click",()=>{setShape(el.dataset.shape);if(el.classList.contains("shape-card"))$("builder").scrollIntoView({behavior:"smooth"})}));
+$("shapeSelect").addEventListener("change",e=>setShape(e.target.value));
+$("menuBtn").addEventListener("click",()=>{let open=$("navlinks").classList.toggle("open");$("menuBtn").setAttribute("aria-expanded",String(open))});
+document.querySelectorAll(".navlinks a").forEach(a=>a.addEventListener("click",()=>{$("navlinks").classList.remove("open");$("menuBtn").setAttribute("aria-expanded","false")}));
 
-/* Practice quiz */
+const formulas=[
+{g:4,title:"Perimeter of a rectangle",eq:"P = 2 × (l + w)",ex:"Add the length and width, then double the result.",vars:"l = length, w = width"},
+{g:4,title:"Area of a rectangle",eq:"A = l × w",ex:"Multiply the number of square units across by the number down.",vars:"A = area"},
+{g:4,title:"Area of a square",eq:"A = s × s",ex:"A square has equal sides, so multiply one side by itself.",vars:"s = side length"},
+{g:4,title:"Perimeter of a polygon",eq:"P = add all sides",ex:"Perimeter is the total distance around the outside.",vars:"Use the same length units throughout."},
+{g:5,title:"Area of a triangle",eq:"A = (b × h) ÷ 2",ex:"Multiply base by perpendicular height, then divide by 2.",vars:"b = base, h = height"},
+{g:5,title:"Volume of a rectangular prism",eq:"V = l × w × h",ex:"Multiply length, width, and height to count cubic units.",vars:"V = volume"},
+{g:5,title:"Convert metric lengths",eq:"1 m = 100 cm",ex:"For length, each metre contains 100 centimetres.",vars:"Convert units before calculating."},
+{g:6,title:"Area of a parallelogram",eq:"A = b × h",ex:"Use the perpendicular height, not the slanted side.",vars:"b = base, h = perpendicular height"},
+{g:6,title:"Circumference of a circle",eq:"C = 2πr  or  πd",ex:"Circumference is the distance around a circle.",vars:"r = radius, d = diameter, π ≈ 3.14"},
+{g:6,title:"Area of a circle",eq:"A = πr²",ex:"Square the radius, then multiply by π.",vars:"r² = radius × radius"},
+{g:7,title:"Area of a trapezoid",eq:"A = ((a + b) × h) ÷ 2",ex:"Add the two parallel bases, multiply by height, then halve.",vars:"a and b = parallel sides"},
+{g:7,title:"Volume of a triangular prism",eq:"V = (b × h ÷ 2) × L",ex:"Find the triangle's area, then multiply by prism length.",vars:"L = length of the prism"},
+{g:7,title:"Surface area of a rectangular prism",eq:"SA = 2(lw + lh + wh)",ex:"Add the areas of the three different face pairs.",vars:"SA = surface area"},
+{g:8,title:"Volume of a cylinder",eq:"V = πr²h",ex:"Area of the circular base multiplied by height.",vars:"r = radius, h = height"},
+{g:8,title:"Volume of a cone",eq:"V = (πr²h) ÷ 3",ex:"One cone has one-third the volume of a cylinder with the same base and height.",vars:"r = radius, h = vertical height"},
+{g:8,title:"Volume of a sphere",eq:"V = (4πr³) ÷ 3",ex:"A sphere's volume depends on the cube of its radius.",vars:"r³ = radius × radius × radius"},
+{g:8,title:"Pythagorean theorem",eq:"a² + b² = c²",ex:"For a right triangle, the squares of the shorter sides sum to the square of the hypotenuse.",vars:"c is the side opposite the right angle"},
+{g:8,title:"Surface area of a cube",eq:"SA = 6s²",ex:"A cube has six equal square faces.",vars:"s = edge length"}
+];
+function renderFormulas(){let g=$("gradeFilter").value,q=$("formulaSearch").value.toLowerCase().trim();let filtered=formulas.filter(f=>(g==="all"||String(f.g)===g)&&`${f.title} ${f.eq} ${f.ex} ${f.vars}`.toLowerCase().includes(q));$("formulaGrid").innerHTML=filtered.length?filtered.map(f=>`<article class="formula"><span class="grade-pill">Grade ${f.g} · typical topic</span><h3>${f.title}</h3><div class="equation">${f.eq}</div><p>${f.ex}</p><p><strong>Symbols:</strong> ${f.vars}</p></article>`).join(""):`<p class="muted">No formulas match that search. Try another word or choose All grades.</p>`}
+$("gradeFilter").addEventListener("change",renderFormulas);
+$("formulaSearch").addEventListener("input",renderFormulas);
+
 const questions=[
- {g:"Grades 4–6",q:"A box is 4 cm long, 3 cm wide and 2 cm high. What is its volume?",a:["9 cm³","24 cm³","12 cm³","18 cm³"],c:1,h:"Multiply length × width × height.",e:"4 × 3 × 2 = 24 cm³."},
- {g:"Grades 4–6",q:"A square has sides of 6 cm. What is its area?",a:["12 cm²","24 cm²","36 cm²","30 cm²"],c:2,h:"Multiply the side by itself.",e:"6 × 6 = 36 cm²."},
- {g:"Grades 4–6",q:"How many faces does a cube have?",a:["4","6","8","12"],c:1,h:"Count every flat square face.",e:"A cube has 6 faces."},
- {g:"Grades 7–8",q:"A cylinder has radius 2 cm and height 5 cm. What is its volume?",a:["10π cm³","20π cm³","25π cm³","4π cm³"],c:1,h:"Use V = πr²h.",e:"π × 2² × 5 = 20π cm³."},
- {g:"Grades 7–8",q:"A sphere has radius 3 cm. What is its surface area?",a:["9π cm²","12π cm²","36π cm²","27π cm²"],c:2,h:"Use SA = 4πr².",e:"4 × π × 3² = 36π cm²."},
- {g:"Grades 7–8",q:"A right triangle has legs 3 and 4. What is the hypotenuse?",a:["5","6","7","12"],c:0,h:"Use a² + b² = c².",e:"3² + 4² = 25, so the hypotenuse is 5."},
- {g:"Grades 9–10",q:"What is the slope between (1, 2) and (3, 6)?",a:["2","4","½","3"],c:0,h:"Divide the change in y by the change in x.",e:"(6 − 2) ÷ (3 − 1) = 2."},
- {g:"Grades 9–10",q:"What is the sum of the interior angles of a hexagon?",a:["360°","540°","720°","900°"],c:2,h:"Use (n − 2) × 180°.",e:"(6 − 2) × 180° = 720°."},
- {g:"Grades 11–12",q:"What is the derivative of x³?",a:["x²","2x","3x²","3x"],c:2,h:"Multiply by the power, then subtract one from the power.",e:"The derivative is 3x²."},
- {g:"Grades 11–12",q:"What is sin θ in a right triangle?",a:["Adjacent/hypotenuse","Opposite/hypotenuse","Opposite/adjacent","Hypotenuse/opposite"],c:1,h:"Remember SOH-CAH-TOA.",e:"Sine = opposite ÷ hypotenuse."}
+{q:"What is the area of a rectangle with length 8 cm and width 3 cm?",a:24,unit:"cm²",why:"Area = length × width = 8 × 3 = 24 cm²."},
+{q:"A square has side length 6 cm. What is its perimeter?",a:24,unit:"cm",why:"Perimeter = 4 × side = 4 × 6 = 24 cm."},
+{q:"A triangle has base 10 cm and height 4 cm. What is its area?",a:20,unit:"cm²",why:"Area = (base × height) ÷ 2 = (10 × 4) ÷ 2 = 20 cm²."},
+{q:"A rectangular prism is 5 cm long, 2 cm wide, and 3 cm high. What is its volume?",a:30,unit:"cm³",why:"Volume = length × width × height = 5 × 2 × 3 = 30 cm³."},
+{q:"A circle has radius 3 cm. Using π ≈ 3.14, what is its circumference to 2 decimal places?",a:18.84,unit:"cm",why:"Circumference = 2πr = 2 × 3.14 × 3 = 18.84 cm."},
+{q:"A parallelogram has base 7 cm and perpendicular height 4 cm. What is its area?",a:28,unit:"cm²",why:"Area = base × perpendicular height = 7 × 4 = 28 cm²."},
+{q:"A cube has edge length 3 cm. What is its volume?",a:27,unit:"cm³",why:"Volume = side³ = 3 × 3 × 3 = 27 cm³."}
 ];
-let qi=0,correct=0,attempted=0,answered=false;
-const $=id=>document.getElementById(id);
-function showQuestion(){
-  const q=questions[qi];answered=false;
-  $("questionNumber").textContent=`QUESTION ${qi+1} / ${questions.length}`;
-  $("questionGrade").textContent=q.g;
-  $("questionText").textContent=q.q;
-  $("feedback").textContent="";
-  $("showHint").disabled=false;
-  $("answerOptions").innerHTML=q.a.map((a,i)=>`<button class="answer" type="button" data-i="${i}">${a}</button>`).join("");
-  document.querySelectorAll(".answer").forEach(b=>b.addEventListener("click",()=>answerQuestion(Number(b.dataset.i))));
-  $("nextQuestion").textContent=qi===questions.length-1?"Start over ↻":"Next →";
-}
-function answerQuestion(i){
-  if(answered)return;answered=true;attempted++;
-  const q=questions[qi];
-  document.querySelectorAll(".answer").forEach((b,j)=>{
-    b.disabled=true;
-    if(j===q.c)b.classList.add("correct");
-    if(j===i&&i!==q.c)b.classList.add("wrong");
-  });
-  if(i===q.c){correct++;$("feedback").textContent="Correct!";}
-  else $("feedback").textContent="Not quite. "+q.e;
-  $("score").textContent=correct+"/"+attempted;
-  $("showHint").disabled=true;
-}
-$("showHint").addEventListener("click",()=>{if(!answered)$("feedback").textContent=questions[qi].h;});
-$("nextQuestion").addEventListener("click",()=>{qi=qi===questions.length-1?0:qi+1;showQuestion();});
-$("resetQuiz").addEventListener("click",()=>{qi=0;correct=0;attempted=0;$("score").textContent="0/0";showQuestion();});
+let qi=0;
+function showQuestion(){const q=questions[qi];$("questionTag").textContent=`Question ${qi+1} of ${questions.length}`;$("questionText").textContent=q.q;$("answerInput").value="";$("feedback").textContent="";$("feedback").className="feedback"}
+$("checkAnswer").addEventListener("click",()=>{let input=$("answerInput").value;if(input===""){$("feedback").textContent="Enter a number first.";return}let n=Number(input),q=questions[qi];if(Math.abs(n-q.a)<0.02){$("feedback").textContent="Correct! "+q.why;$("feedback").className="feedback correct"}else{$("feedback").textContent="Not quite. Try again. Hint: check which formula fits the shape.";$("feedback").className="feedback incorrect"}});
+$("answerInput").addEventListener("keydown",e=>{if(e.key==="Enter")$("checkAnswer").click()});
+$("nextQuestion").addEventListener("click",()=>{qi=(qi+1)%questions.length;showQuestion()});
+setShape("rectangle");
+renderFormulas();
 showQuestion();
-</script>
 
-<script type="module">
-import * as THREE from "three";
-import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+/* NEW FEATURE: AREA AND PERIMETER VISUAL EXPLORER */
+(() => {
+  const drawing = document.getElementById("vmDrawing");
+  if (!drawing) return;
 
-const viewer=document.getElementById("viewer");
-const errorBox=document.getElementById("viewerError");
-const shapeSelect=document.getElementById("shapeSelect");
-const sliders={
-  a:document.getElementById("sliderA"),
-  b:document.getElementById("sliderB"),
-  c:document.getElementById("sliderC")
-};
-const labels={
-  a:document.getElementById("labelA"),
-  b:document.getElementById("labelB"),
-  c:document.getElementById("labelC")
-};
-const outputs={
-  a:document.getElementById("valueA"),
-  b:document.getElementById("valueB"),
-  c:document.getElementById("valueC")
-};
+  const lengthInput = document.getElementById("vmLength");
+  const widthInput = document.getElementById("vmWidth");
+  const widthControl = document.getElementById("vmWidthControl");
+  let vmShape = "rectangle";
 
-let scene,camera,renderer,controls,mesh;
-let spinning=true;
-let animationId=0;
+  const fmtVM = n => Number(n.toFixed(2)).toLocaleString("en-CA", {
+    maximumFractionDigits: 2
+  });
 
-const mat=(color,roughness=.52)=>new THREE.MeshStandardMaterial({
-  color,roughness,metalness:.04
-});
+  function renderVM() {
+    const a = Number(lengthInput.value);
+    const b = Number(widthInput.value);
 
-const palette={
-  main:mat("#86b5a0"),
-  side:mat("#cbdff0"),
-  top:mat("#f2df9d"),
-  dark:mat("#e9a995"),
-  wire:new THREE.LineBasicMaterial({color:"#27332e",transparent:true,opacity:.8})
-};
+    document.getElementById("vmLengthValue").textContent = a;
+    document.getElementById("vmWidthValue").textContent = b;
 
-function init3D(){
-  try{
-    scene=new THREE.Scene();
-    scene.background=new THREE.Color("#e9edf0");
+    document.getElementById("vmLengthLabel").textContent =
+      vmShape === "triangle" ? "Base" : "Length";
 
-    camera=new THREE.PerspectiveCamera(38,1,.1,100);
-    camera.position.set(6,5,8);
+    document.getElementById("vmWidthLabel").textContent =
+      vmShape === "triangle" ? "Height" : "Width";
 
-    renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
-    renderer.outputColorSpace=THREE.SRGBColorSpace;
-    renderer.shadowMap.enabled=true;
-    renderer.shadowMap.type=THREE.PCFSoftShadowMap;
-    viewer.insertBefore(renderer.domElement,viewer.firstChild);
+    widthControl.style.display = vmShape === "square" ? "none" : "";
 
-    controls=new OrbitControls(camera,renderer.domElement);
-    controls.enableDamping=true;
-    controls.dampingFactor=.06;
-    controls.minDistance=3;
-    controls.maxDistance=18;
-    controls.target.set(0,0,0);
+    let area, perimeter, areaFormula, perimeterFormula, points, labels = "";
 
-    scene.add(new THREE.HemisphereLight("#ffffff","#a8b5c2",2.1));
-    const light=new THREE.DirectionalLight("#ffffff",2.5);
-    light.position.set(5,8,6);
-    scene.add(light);
-    const fill=new THREE.DirectionalLight("#d4e5ff",1.1);
-    fill.position.set(-5,2,-5);
-    scene.add(fill);
+    if (vmShape === "rectangle" || vmShape === "square") {
+      const w = vmShape === "square" ? a : b;
 
-    const floor=new THREE.Mesh(
-      new THREE.PlaneGeometry(200,200),
-      new THREE.ShadowMaterial({opacity:.12})
-    );
-    floor.rotation.x=-Math.PI/2;
-    floor.position.y=-4.5;
-    floor.receiveShadow=true;
-    scene.add(floor);
+      area = a * w;
+      perimeter = 2 * (a + w);
 
-    const grid=new THREE.GridHelper(14,14,"#c3cdd2","#d5dce0");
-    grid.position.y=-4.49;
-    scene.add(grid);
+      areaFormula = `${a} × ${w} = ${fmtVM(area)}`;
+      perimeterFormula = `${a} + ${w} + ${a} + ${w} = ${fmtVM(perimeter)}`;
 
-    resize3D();
-    window.addEventListener("resize",resize3D);
-    buildShape();
-    animate();
-  }catch(error){
-    console.error("GeoLab 3D error:",error);
-    errorBox.classList.add("show");
-  }
-}
+      const scale = Math.min(245 / a, 145 / w);
+      const rw = a * scale;
+      const rh = w * scale;
+      const x = (360 - rw) / 2;
+      const y = (245 - rh) / 2;
 
-function disposeObject(object){
-  if(!object)return;
-  object.traverse(child=>{
-    if(child.geometry)child.geometry.dispose();
-    if(child.material){
-      if(Array.isArray(child.material))child.material.forEach(m=>m.dispose());
-      else child.material.dispose();
+      points = [
+        [x, y],
+        [x + rw, y],
+        [x + rw, y + rh],
+        [x, y + rh]
+      ];
+
+      labels = `
+        <text x="${x + rw / 2}" y="${y - 10}" text-anchor="middle">${a} units</text>
+        <text x="${x + rw + 8}" y="${y + rh / 2}" dominant-baseline="middle">${w}</text>
+      `;
+    } else {
+      // Isosceles triangle: base a and perpendicular height b.
+      const side = Math.sqrt((a / 2) ** 2 + b ** 2);
+
+      area = a * b / 2;
+      perimeter = a + 2 * side;
+
+      areaFormula = `(${a} × ${b}) ÷ 2 = ${fmtVM(area)}`;
+      perimeterFormula = `${a} + ${fmtVM(side)} + ${fmtVM(side)} = ${fmtVM(perimeter)}`;
+
+      const scale = Math.min(245 / a, 155 / b);
+      const tw = a * scale;
+      const th = b * scale;
+      const x = (360 - tw) / 2;
+      const y = 226;
+
+      points = [
+        [x, y],
+        [x + tw, y],
+        [x + tw / 2, y - th]
+      ];
+
+      labels = `
+        <text x="180" y="${y + 19}" text-anchor="middle">Base ${a} units</text>
+        <text x="${x + tw / 2 + 10}" y="${y - th / 2}">Height ${b}</text>
+      `;
     }
-  });
-  scene.remove(object);
-}
 
-function makeEdges(geometry,parent){
-  const edgeGeo=new THREE.EdgesGeometry(geometry);
-  const edgeLines=new THREE.LineSegments(edgeGeo,new THREE.LineBasicMaterial({color:"#34423b",transparent:true,opacity:.55}));
-  parent.add(edgeLines);
-}
+    const pointString = points.map(p => p.join(",")).join(" ");
 
-function solid(geometry,material,parent){
-  const object=new THREE.Mesh(geometry,material);
-  object.castShadow=true;
-  object.receiveShadow=true;
-  parent.add(object);
-  makeEdges(geometry,object);
-  return object;
-}
+    drawing.innerHTML = `
+      <defs>
+        <pattern id="vmAreaGrid" width="12" height="12" patternUnits="userSpaceOnUse">
+          <path d="M 12 0 L 0 0 0 12"
+            fill="none" stroke="#64865b" stroke-width=".8" opacity=".5"/>
+        </pattern>
+      </defs>
 
-function makeShape(type,a,b,c){
-  const group=new THREE.Group();
-  const m1=mat("#83b39d"),m2=mat("#cbdff0"),m3=mat("#f2df9d"),m4=mat("#f1c4b5");
+      <polygon points="${pointString}"
+        fill="#bfe4b2" stroke="#f1a28d"
+        stroke-width="7" stroke-linejoin="round"/>
 
-  if(type==="cube"){
-    solid(new THREE.BoxGeometry(a,a,a),m1,group);
-  }else if(type==="box"){
-    solid(new THREE.BoxGeometry(a,b,c),m1,group);
-  }else if(type==="sphere"){
-    solid(new THREE.SphereGeometry(a/2,48,32),m2,group);
-  }else if(type==="cylinder"){
-    solid(new THREE.CylinderGeometry(a/2,a/2,b,48),m3,group);
-  }else if(type==="cone"){
-    solid(new THREE.ConeGeometry(a/2,b,48),m4,group);
-  }else if(type==="triPrism"){
-    // A triangular prism: an equilateral triangular cross-section extruded along its length.
-    const side=a, length=b;
-    const shape=new THREE.Shape();
-    shape.moveTo(-side/2,-side/(2*Math.sqrt(3)));
-    shape.lineTo(side/2,-side/(2*Math.sqrt(3)));
-    shape.lineTo(0,side/Math.sqrt(3));
-    shape.closePath();
-    const geo=new THREE.ExtrudeGeometry(shape,{depth:length,bevelEnabled:false});
-    geo.translate(0,0,-length/2);
-    geo.rotateX(-Math.PI/2);
-    solid(geo,m1,group);
-  }else if(type==="pyramid"){
-    solid(new THREE.ConeGeometry(a/Math.sqrt(2),b,4,1),m4,group).rotation.y=Math.PI/4;
+      <polygon points="${pointString}"
+        fill="url(#vmAreaGrid)" stroke="none"/>
+
+      <polygon points="${pointString}"
+        fill="none" stroke="#f1a28d"
+        stroke-width="4" stroke-linejoin="round"/>
+
+      ${labels}
+
+      <text x="180" y="263" text-anchor="middle"
+        style="font-size:10px;font-weight:600">
+        Inside = area · Outside edge = perimeter
+      </text>
+    `;
+
+    document.getElementById("vmArea").textContent = fmtVM(area);
+    document.getElementById("vmPerimeter").textContent = fmtVM(perimeter);
+    document.getElementById("vmAreaFormula").textContent = areaFormula;
+    document.getElementById("vmPerimeterFormula").textContent = perimeterFormula;
+
+    document.getElementById("vmAreaMeaning").textContent =
+      `The shaded region covers ${fmtVM(area)} square units.`;
+
+    document.getElementById("vmPerimeterMeaning").textContent =
+      `The total distance around the outside is ${fmtVM(perimeter)} units.`;
+
+    document.querySelectorAll("[data-vm-shape]").forEach(button => {
+      const active = button.dataset.vmShape === vmShape;
+      button.classList.toggle("active", active);
+      button.setAttribute("aria-pressed", String(active));
+    });
   }
-  group.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});
-  return group;
-}
 
-function currentDimensions(){
-  return {
-    a:Number(sliders.a.value),
-    b:Number(sliders.b.value),
-    c:Number(sliders.c.value)
-  };
-}
+  document.querySelectorAll("[data-vm-shape]").forEach(button => {
+    button.addEventListener("click", () => {
+      vmShape = button.dataset.vmShape;
 
-function getShapeName(type){
-  return ({
-    cube:"Cube",
-    box:"Rectangular prism",
-    sphere:"Sphere",
-    cylinder:"Cylinder",
-    cone:"Cone",
-    triPrism:"Triangular prism",
-    pyramid:"Square pyramid"
-  })[type];
-}
+      if (vmShape === "square") {
+        lengthInput.value = 6;
+        widthInput.value = 6;
+      } else if (vmShape === "rectangle") {
+        lengthInput.value = 8;
+        widthInput.value = 4;
+      } else {
+        lengthInput.value = 8;
+        widthInput.value = 5;
+      }
 
-function configureControls(type){
-  const settings={
-    cube:[["Side length",1,8,4],null,null],
-    box:[["Length",1,8,4],["Width",1,8,3],["Height",1,8,3]],
-    sphere:[["Diameter",1,8,4],null,null],
-    cylinder:[["Diameter",1,8,4],["Height",1,8,5],null],
-    cone:[["Diameter",1,8,4],["Height",1,8,5],null],
-    triPrism:[["Triangle side",1,8,4],["Prism length",1,8,5],null],
-    pyramid:[["Base side",1,8,4],["Height",1,8,5],null]
-  }[type];
-
-  ["a","b","c"].forEach((key,i)=>{
-    const el=document.getElementById("control"+key.toUpperCase());
-    const cfg=settings[i];
-    el.style.display=cfg?"":"none";
-    if(cfg){
-      labels[key].textContent=cfg[0];
-      sliders[key].min=cfg[1];
-      sliders[key].max=cfg[2];
-      sliders[key].value=cfg[3];
-      outputs[key].textContent=cfg[3];
-    }
+      renderVM();
+    });
   });
-}
 
-function calculate(type,a,b,c){
-  let volume=0,surface=0;
-  const pi=Math.PI;
+  lengthInput.addEventListener("input", renderVM);
+  widthInput.addEventListener("input", renderVM);
 
-  if(type==="cube"){
-    volume=a**3;surface=6*a**2;
-  }else if(type==="box"){
-    volume=a*b*c;surface=2*(a*b+a*c+b*c);
-  }else if(type==="sphere"){
-    const r=a/2;
-    volume=4*pi*r**3/3;surface=4*pi*r**2;
-  }else if(type==="cylinder"){
-    const r=a/2,h=b;
-    volume=pi*r*r*h;surface=2*pi*r*(r+h);
-  }else if(type==="cone"){
-    const r=a/2,h=b;
-    volume=pi*r*r*h/3;surface=pi*r*(r+Math.sqrt(r*r+h*h));
-  }else if(type==="triPrism"){
-    const s=a,L=b,triangleArea=Math.sqrt(3)*s*s/4;
-    volume=triangleArea*L;
-    surface=2*triangleArea+3*s*L;
-  }else if(type==="pyramid"){
-    const s=a,h=b,slant=Math.sqrt(h*h+(s/2)**2);
-    volume=s*s*h/3;
-    surface=s*s+2*s*slant;
-  }
-  return {volume,surface};
-}
-
-function formatNumber(n){
-  return Number(n.toFixed(2)).toLocaleString("en-CA",{maximumFractionDigits:2});
-}
-
-function buildShape(){
-  if(!scene)return;
-  const type=shapeSelect.value;
-  const {a,b,c}=currentDimensions();
-
-  if(mesh)disposeObject(mesh);
-  mesh=makeShape(type,a,b,c);
-  scene.add(mesh);
-
-  // Keep the selected object centered and at a useful scale.
-  const box=new THREE.Box3().setFromObject(mesh);
-  const size=box.getSize(new THREE.Vector3());
-  const largest=Math.max(size.x,size.y,size.z)||1;
-  const scale=3.2/largest;
-  mesh.scale.setScalar(scale);
-
-  document.getElementById("viewerTitle").textContent=getShapeName(type);
-  document.getElementById("shapeSummary").textContent=getShapeName(type);
-
-  ["a","b","c"].forEach(k=>outputs[k].textContent=sliders[k].value);
-
-  const result=calculate(type,a,b,c);
-  document.getElementById("volume").textContent=formatNumber(result.volume);
-  document.getElementById("surface").textContent=formatNumber(result.surface);
-
-  document.querySelectorAll(".shape-card").forEach(card=>{
-    card.classList.toggle("active",card.dataset.shape===type);
+  document.getElementById("vmReset").addEventListener("click", () => {
+    vmShape = "rectangle";
+    lengthInput.value = 8;
+    widthInput.value = 4;
+    renderVM();
   });
-}
 
-function resize3D(){
-  if(!renderer||!camera)return;
-  const width=Math.max(1,viewer.clientWidth);
-  const height=Math.max(1,viewer.clientHeight);
-  renderer.setSize(width,height,false);
-  camera.aspect=width/height;
-  camera.updateProjectionMatrix();
-}
-
-function animate(){
-  animationId=requestAnimationFrame(animate);
-  if(mesh&&spinning)mesh.rotation.y+=.0035;
-  if(controls)controls.update();
-  if(renderer&&scene&&camera)renderer.render(scene,camera);
-}
-
-shapeSelect.addEventListener("change",()=>{
-  configureControls(shapeSelect.value);
-  buildShape();
-});
-Object.values(sliders).forEach(slider=>slider.addEventListener("input",buildShape));
-
-document.querySelectorAll(".shape-card").forEach(card=>{
-  card.addEventListener("click",()=>{
-    shapeSelect.value=card.dataset.shape;
-    configureControls(shapeSelect.value);
-    buildShape();
-    document.getElementById("lab").scrollIntoView({behavior:"smooth"});
-  });
-});
-
-document.getElementById("pauseRotation").addEventListener("click",event=>{
-  spinning=!spinning;
-  event.currentTarget.textContent=spinning?"Pause spin":"Resume spin";
-});
-
-document.getElementById("resetView").addEventListener("click",()=>{
-  if(!camera||!controls)return;
-  camera.position.set(6,5,8);
-  controls.target.set(0,0,0);
-  controls.update();
-});
-
-document.getElementById("resetDimensions").addEventListener("click",()=>{
-  configureControls(shapeSelect.value);
-  buildShape();
-});
-
-configureControls(shapeSelect.value);
-init3D();
+  renderVM();
+})();
 </script>
 </body>
 </html>
