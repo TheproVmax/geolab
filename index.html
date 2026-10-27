@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -5,6 +6,15 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="Explore 3D geometry, formulas and practice questions with GeoLab.">
 <title>GeoLab — Math you can move</title>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
+  }
+}
+</script>
 
 <style>
 :root {
@@ -14,15 +24,10 @@
   --muted: #666b63;
   --green: #42664d;
   --green-light: #e5eadf;
-  --blue: #e5ebed;
-  --yellow: #f0e5bd;
-  --coral: #eedbd2;
   --line: #dcded4;
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 html {
   scroll-behavior: smooth;
@@ -33,21 +38,12 @@ body {
   margin: 0;
   background: var(--paper);
   color: var(--ink);
-  font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  font: 16px/1.6 Arial, Helvetica, sans-serif;
 }
 
-button,
-input {
-  font: inherit;
-}
-
-button {
-  cursor: pointer;
-}
-
-a {
-  color: inherit;
-}
+button, input { font: inherit; }
+button { cursor: pointer; }
+a { color: inherit; }
 
 header {
   position: sticky;
@@ -70,14 +66,12 @@ nav {
 .brand {
   font-size: 1.25rem;
   font-weight: 750;
-  letter-spacing: -0.045em;
+  letter-spacing: -.045em;
   text-decoration: none;
   white-space: nowrap;
 }
 
-.brand span {
-  color: var(--green);
-}
+.brand span { color: var(--green); }
 
 .links {
   display: flex;
@@ -86,7 +80,7 @@ nav {
 }
 
 .links a {
-  font-size: 0.88rem;
+  font-size: .88rem;
   color: var(--muted);
   text-decoration: none;
 }
@@ -105,32 +99,34 @@ main {
 
 .hero {
   display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
+  grid-template-columns: 1.1fr .9fr;
   gap: 42px;
   align-items: center;
   padding: 48px 0 57px;
 }
 
 .eyebrow {
-  font-size: 0.72rem;
+  font-size: .72rem;
   text-transform: uppercase;
-  letter-spacing: 0.11em;
+  letter-spacing: .11em;
   font-weight: 700;
   color: var(--green);
+}
+
+h1, h2 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 500;
 }
 
 h1 {
   max-width: 590px;
   font-size: clamp(2.45rem, 5vw, 3.75rem);
   line-height: 1.08;
-  letter-spacing: -0.055em;
-  font-weight: 750;
+  letter-spacing: -.045em;
   margin: 16px 0;
 }
 
-p {
-  color: var(--muted);
-}
+p { color: var(--muted); }
 
 .hero p {
   max-width: 470px;
@@ -154,10 +150,10 @@ p {
   background: var(--white);
   color: var(--ink);
   padding: 9px 14px;
-  font-size: 0.9rem;
+  font-size: .9rem;
   font-weight: 600;
   text-decoration: none;
-  transition: background 120ms ease, border-color 120ms ease;
+  transition: background .12s, border-color .12s;
 }
 
 .btn:hover {
@@ -171,12 +167,10 @@ p {
   border-color: var(--green);
 }
 
-.btn.primary:hover {
-  background: #304f39;
-}
+.btn.primary:hover { background: #304f39; }
 
 .btn:disabled {
-  opacity: 0.5;
+  opacity: .5;
   cursor: not-allowed;
 }
 
@@ -201,26 +195,21 @@ p {
   border-top: 1px solid var(--line);
 }
 
-.head {
-  margin-bottom: 19px;
-}
+.head { margin-bottom: 19px; }
 
 .head h2 {
   font-size: clamp(1.65rem, 3vw, 2.15rem);
   line-height: 1.2;
-  letter-spacing: -0.04em;
-  font-weight: 700;
+  letter-spacing: -.035em;
   margin: 5px 0 6px;
 }
 
 .head p {
   margin: 4px 0;
-  font-size: 0.95rem;
+  font-size: .95rem;
 }
 
-.panel,
-.card,
-.quiz {
+.panel, .card, .quiz {
   background: var(--white);
   border: 1px solid var(--line);
   border-radius: 3px;
@@ -228,7 +217,7 @@ p {
 
 .lab {
   display: grid;
-  grid-template-columns: 1.45fr 0.8fr;
+  grid-template-columns: 1.45fr .8fr;
   gap: 17px;
   align-items: start;
 }
@@ -245,71 +234,62 @@ p {
   display: block;
   width: 100%;
   height: 100%;
+  touch-action: none;
 }
 
 .status {
   position: absolute;
   bottom: 10px;
   left: 10px;
+  z-index: 1;
   background: var(--white);
   border: 1px solid var(--line);
   padding: 4px 9px;
-  font-size: 0.76rem;
+  font-size: .76rem;
   color: var(--muted);
+  pointer-events: none;
 }
 
 .hintline {
-  font-size: 0.82rem;
+  font-size: .82rem;
   margin: 8px 2px;
 }
 
-.controls {
-  padding: 17px;
-}
+.controls { padding: 17px; }
 
 .controls h3 {
   font-size: 1.03rem;
   margin: 0 0 14px;
 }
 
-.choices,
-.filters {
+.choices, .filters {
   display: flex;
   gap: 7px;
   flex-wrap: wrap;
   margin-bottom: 16px;
 }
 
-.pick,
-.filter {
+.pick, .filter {
   border: 1px solid #d6d9cf;
   background: var(--white);
   border-radius: 3px;
   padding: 6px 9px;
-  font-size: 0.81rem;
+  font-size: .81rem;
   color: var(--ink);
 }
 
-.pick:hover,
-.filter:hover {
-  border-color: var(--green);
-}
+.pick:hover, .filter:hover { border-color: var(--green); }
 
-.pick.active,
-.filter.active {
+.pick.active, .filter.active {
   background: var(--green-light);
   border-color: #9eaf9b;
   color: #2d4b35;
   font-weight: 650;
 }
 
-.slider {
-  margin: 15px 0;
-}
+.slider { margin: 15px 0; }
 
-.slider label {
-  font-size: 0.86rem;
-}
+.slider label { font-size: .86rem; }
 
 .slider-top {
   display: flex;
@@ -345,7 +325,7 @@ input[type="range"] {
 .metric small {
   display: block;
   color: var(--muted);
-  font-size: 0.74rem;
+  font-size: .74rem;
 }
 
 .metric strong {
@@ -356,7 +336,7 @@ input[type="range"] {
 }
 
 .notice {
-  font-size: 0.79rem;
+  font-size: .79rem;
   margin-bottom: 0;
 }
 
@@ -385,19 +365,19 @@ input[type="range"] {
 }
 
 .card h3 {
-  font-size: 0.99rem;
+  font-size: .99rem;
   line-height: 1.35;
   margin: 0;
 }
 
 .card p {
-  font-size: 0.83rem;
+  font-size: .83rem;
   line-height: 1.55;
   margin: 5px 0 13px;
 }
 
 .card .btn {
-  font-size: 0.8rem;
+  font-size: .8rem;
   padding: 7px 10px;
 }
 
@@ -416,9 +396,9 @@ input[type="range"] {
 
 .tag {
   color: var(--green);
-  font-size: 0.7rem;
+  font-size: .7rem;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: .08em;
   font-weight: 700;
 }
 
@@ -436,14 +416,12 @@ input[type="range"] {
 }
 
 .formula p {
-  font-size: 0.83rem;
+  font-size: .83rem;
   line-height: 1.55;
   margin-bottom: 0;
 }
 
-.quiz {
-  padding: 21px;
-}
+.quiz { padding: 21px; }
 
 .quiztop {
   display: flex;
@@ -451,7 +429,7 @@ input[type="range"] {
   gap: 12px;
   flex-wrap: wrap;
   color: var(--muted);
-  font-size: 0.86rem;
+  font-size: .86rem;
 }
 
 .quiztop strong {
@@ -478,7 +456,7 @@ input[type="range"] {
   border-radius: 3px;
   color: var(--ink);
   text-align: left;
-  transition: border-color 120ms ease, background 120ms ease;
+  transition: border-color .12s, background .12s;
 }
 
 .answer:hover:not(:disabled) {
@@ -500,7 +478,7 @@ input[type="range"] {
   min-height: 28px;
   margin: 13px 0;
   color: var(--muted);
-  font-size: 0.9rem;
+  font-size: .9rem;
 }
 
 .quizactions {
@@ -514,12 +492,10 @@ footer {
   text-align: center;
   padding: 23px 16px;
   color: var(--muted);
-  font-size: 0.82rem;
+  font-size: .82rem;
 }
 
-button:focus-visible,
-a:focus-visible,
-input:focus-visible {
+button:focus-visible, a:focus-visible, input:focus-visible {
   outline: 2px solid var(--green);
   outline-offset: 3px;
 }
@@ -541,21 +517,10 @@ input:focus-visible {
     padding: 31px 0 38px;
   }
 
-  .art {
-    min-height: 210px;
-  }
-
-  .lab {
-    grid-template-columns: 1fr;
-  }
-
-  .grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .formulas {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+  .art { min-height: 210px; }
+  .lab { grid-template-columns: 1fr; }
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .formulas { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 
   main {
     padding-right: 18px;
@@ -574,46 +539,26 @@ input:focus-visible {
     gap: 9px 17px;
   }
 
-  main {
-    padding: 18px 14px 45px;
-  }
+  main { padding: 18px 14px 45px; }
+  h1 { font-size: 2.5rem; }
+  #viewer { height: 285px; }
 
-  h1 {
-    font-size: 2.5rem;
-  }
-
-  #viewer {
-    height: 285px;
-  }
-
-  .formulas,
-  .answers {
-    grid-template-columns: 1fr;
-  }
-
-  .quiz {
-    padding: 15px;
-  }
+  .formulas, .answers { grid-template-columns: 1fr; }
+  .quiz { padding: 15px; }
 
   .section {
     margin-top: 35px;
     padding-top: 22px;
   }
 
-  .actions .btn {
-    padding: 9px 11px;
-  }
+  .actions .btn { padding: 9px 11px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
+  html { scroll-behavior: auto; }
 
-  *,
-  *::before,
-  *::after {
-    transition-duration: 0.01ms !important;
+  *, *::before, *::after {
+    transition-duration: .01ms !important;
   }
 }
 </style>
@@ -643,7 +588,6 @@ input:focus-visible {
       <a class="btn" href="#practice">Try a question</a>
     </div>
   </div>
-
   <div class="art">
     <svg viewBox="0 0 400 250" aria-label="Illustration of geometric solids">
       <ellipse cx="200" cy="220" rx="150" ry="15" fill="#d3dfd0"/>
@@ -680,6 +624,7 @@ input:focus-visible {
       <h3>Choose a solid</h3>
       <div class="choices" id="choices"></div>
       <div id="sliders"></div>
+
       <div class="metrics">
         <div class="metric">
           <small>Volume</small>
@@ -724,7 +669,6 @@ input:focus-visible {
     <h2>Quick check</h2>
     <p>Choose an answer and get feedback.</p>
   </div>
-
   <div class="quiz">
     <div class="quiztop">
       <span id="qcount">Question 1</span>
@@ -833,7 +777,7 @@ const $ = id => document.getElementById(id);
 const fmt = n => Number(n).toLocaleString(undefined, {maximumFractionDigits: 2});
 
 function getVals(k) {
-  let d = {};
+  const d = {};
   shapes[k].dims.forEach(x => d[x[0]] = vals[k]?.[x[0]] ?? x[4]);
   return d;
 }
@@ -850,7 +794,7 @@ function selectShape(k) {
 function renderChoices() {
   $("choices").innerHTML = "";
   Object.keys(shapes).forEach(k => {
-    let b = document.createElement("button");
+    const b = document.createElement("button");
     b.className = "pick" + (k === current ? " active" : "");
     b.textContent = shapes[k].name;
     b.onclick = () => selectShape(k);
@@ -860,10 +804,11 @@ function renderChoices() {
 
 function renderSliders() {
   $("sliders").innerHTML = "";
+
   shapes[current].dims.forEach(s => {
-    let row = document.createElement("div");
+    const row = document.createElement("div");
     row.className = "slider";
-    let key = s[0];
+    const key = s[0];
 
     row.innerHTML = `
       <div class="slider-top">
@@ -876,7 +821,7 @@ function renderSliders() {
     `;
 
     row.querySelector("input").addEventListener("input", e => {
-      vals[current][key] = +e.target.value;
+      vals[current][key] = Number(e.target.value);
       $("out-" + key).value = e.target.value;
       metrics();
       if (draw3D) draw3D(current, getVals(current));
@@ -887,7 +832,7 @@ function renderSliders() {
 }
 
 function metrics() {
-  let s = shapes[current], d = getVals(current);
+  const s = shapes[current], d = getVals(current);
   $("volume").textContent = fmt(s.v(d)) + " units³";
   $("area").textContent = fmt(s.a(d)) + " units²";
   $("note").textContent = s.note;
@@ -907,7 +852,7 @@ function renderShapeCards() {
   $("shapeGrid").innerHTML = "";
 
   Object.keys(shapes).forEach(k => {
-    let s = shapes[k], c = document.createElement("article");
+    const s = shapes[k], c = document.createElement("article");
     c.className = "card";
 
     c.innerHTML = `
@@ -932,7 +877,7 @@ function renderFormulas(filter = "all") {
   $("formulaGrid").innerHTML = "";
 
   Object.keys(shapes).forEach(k => {
-    let s = shapes[k], c = document.createElement("article");
+    const s = shapes[k], c = document.createElement("article");
     c.className = "formula";
 
     if (filter === "volume" || filter === "area") {
@@ -957,7 +902,7 @@ function renderFormulas(filter = "all") {
 }
 
 $("filters").onclick = e => {
-  let b = e.target.closest("[data-filter]");
+  const b = e.target.closest("[data-filter]");
   if (!b) return;
 
   document.querySelectorAll(".filter").forEach(x =>
@@ -1020,7 +965,7 @@ function updateScore() {
 
 function showQuestion() {
   done = false;
-  let q = qs[qi];
+  const q = qs[qi];
 
   $("qcount").textContent = `Question ${qi + 1} of ${qs.length}`;
   $("question").textContent = q.q;
@@ -1030,7 +975,7 @@ function showQuestion() {
   $("answers").innerHTML = "";
 
   q.a.forEach((a, i) => {
-    let b = document.createElement("button");
+    const b = document.createElement("button");
     b.className = "answer";
     b.textContent = a;
     b.onclick = () => answer(i);
@@ -1046,7 +991,7 @@ function answer(i) {
   done = true;
   attempts++;
 
-  let q = qs[qi];
+  const q = qs[qi];
 
   [...$("answers").children].forEach((b, j) => {
     b.disabled = true;
@@ -1093,8 +1038,9 @@ showQuestion();
 const status = document.getElementById("status");
 
 try {
-  const THREE = await import("https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js");
-  const {OrbitControls} = await import("https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/controls/OrbitControls.js");
+  // Import map above makes Three.js available to OrbitControls too.
+  const THREE = await import("three");
+  const { OrbitControls } = await import("three/addons/controls/OrbitControls.js");
 
   const host = document.getElementById("viewer");
   const scene = new THREE.Scene();
@@ -1103,8 +1049,8 @@ try {
   const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
   camera.position.set(7, 6, 9);
 
-  const renderer = new THREE.WebGLRenderer({antialias: true});
-  renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   renderer.setSize(host.clientWidth, host.clientHeight);
   host.insertBefore(renderer.domElement, status);
 
@@ -1117,6 +1063,8 @@ try {
   const controls = new OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
   controls.target.set(0, 0, 0);
+  controls.minDistance = 4;
+  controls.maxDistance = 20;
 
   scene.add(new THREE.GridHelper(12, 12, 0xb4c3b0, 0xd2dbce));
 
@@ -1140,13 +1088,13 @@ try {
         return new THREE.ConeGeometry(d.r, d.h, 48);
 
       case "prism": {
-        let s = new THREE.Shape();
+        const s = new THREE.Shape();
         s.moveTo(-d.b/2, -d.t/2);
         s.lineTo(d.b/2, -d.t/2);
         s.lineTo(0, d.t/2);
         s.closePath();
 
-        let g = new THREE.ExtrudeGeometry(s, {
+        const g = new THREE.ExtrudeGeometry(s, {
           depth: d.l,
           bevelEnabled: false
         });
@@ -1156,21 +1104,23 @@ try {
       }
 
       case "pyramid": {
-        let a = d.a/2, h = d.h/2;
-        let p = [
+        const a = d.a/2, h = d.h/2;
+        const p = [
           -a,-h,-a, a,-h,-a, a,-h,a, -a,-h,a, 0,h,0
         ];
-        let idx = [
+        const idx = [
           0,2,1, 0,3,2, 0,1,4, 1,2,4, 2,3,4, 3,0,4
         ];
 
-        let g = new THREE.BufferGeometry();
+        const g = new THREE.BufferGeometry();
         g.setAttribute("position", new THREE.Float32BufferAttribute(p, 3));
         g.setIndex(idx);
         g.computeVertexNormals();
         return g;
       }
     }
+
+    throw new Error("Unknown shape: " + k);
   }
 
   function draw(k, d) {
@@ -1181,13 +1131,13 @@ try {
         mesh.material.dispose();
       }
 
-      let g = geometry(k, d);
+      const g = geometry(k, d);
       g.computeBoundingBox();
 
-      let size = new THREE.Vector3();
+      const size = new THREE.Vector3();
       g.boundingBox.getSize(size);
 
-      let scale = 4 / (Math.max(size.x, size.y, size.z) || 1);
+      const scale = 4 / (Math.max(size.x, size.y, size.z) || 1);
       g.scale(scale, scale, scale);
 
       mesh = new THREE.Mesh(
@@ -1206,24 +1156,27 @@ try {
       status.textContent = "3D model ready · drag to rotate";
     } catch (e) {
       status.textContent = "Could not draw this shape.";
-      console.error(e);
+      console.error("GeoLab shape error:", e);
     }
   }
 
+  // Connect the renderer to the existing shape buttons and sliders.
   window.drawGeoLabShape = draw;
-  draw("cube", {a: 4});
-  window.dispatchEvent(new Event("geolab-ready"));
+  draw3D = draw;
+  draw(current, getVals(current));
 
   function resize() {
-    let w = host.clientWidth, h = host.clientHeight;
+    const w = host.clientWidth;
+    const h = host.clientHeight;
     if (!w || !h) return;
 
-    camera.aspect = w/h;
+    camera.aspect = w / h;
     camera.updateProjectionMatrix();
     renderer.setSize(w, h);
   }
 
   new ResizeObserver(resize).observe(host);
+  window.addEventListener("resize", resize);
 
   function animate() {
     requestAnimationFrame(animate);
@@ -1233,18 +1186,9 @@ try {
 
   animate();
 } catch (e) {
-  status.textContent = "3D viewer unavailable. Check your connection; the formulas and quiz still work.";
+  status.textContent = "3D viewer unavailable. Check your connection or browser WebGL support.";
   console.error("GeoLab 3D error:", e);
 }
 </script>
-
-<script>
-window.addEventListener("geolab-ready", () => {
-  if (window.drawGeoLabShape) {
-    window.drawGeoLabShape(current, getVals(current));
-  }
-});
-</script>
-
 </body>
 </html>
