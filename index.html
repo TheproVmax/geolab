@@ -1,11 +1,173 @@
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Explore 3D geometry, formulas and practice questions with GeoLab.">
-<title>GeoLab — Math you can move</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GeoLab — 3D Geometry Lab</title>
+<style>
+:root {
+  --paper:#f8f6ef;
+  --ink:#252b27;
+  --muted:#777970;
+  --line:#deddd4;
+  --white:#fffef9;
+  --green:#c9dfbd;
+  --blue:#cbdff0;
+  --coral:#f1c4b5;
+  --yellow:#f2df9d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:"Trebuchet MS",Arial,sans-serif;line-height:1.5
+}
+button,select,input{font:inherit}
+button{cursor:pointer}
+nav{
+  padding:17px 6%;display:flex;justify-content:space-between;
+  align-items:center;gap:20px;border-bottom:1px solid var(--line)
+}
+.logo{font-size:24px;font-weight:900;letter-spacing:-1px;color:var(--ink);text-decoration:none}
+.logo span{color:#64865b}
+.nav-links{display:flex;gap:20px;flex-wrap:wrap}
+.nav-links a{font-size:13px;text-decoration:none;color:var(--ink)}
+.nav-links a:hover{text-decoration:underline}
+main{max-width:1150px;margin:auto;padding:0 24px}
+.hero{
+  padding:65px 0 48px;display:grid;grid-template-columns:1.1fr .9fr;
+  align-items:center;gap:30px
+}
+.kicker{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;font-weight:800;color:var(--muted)}
+h1{font-size:clamp(44px,7vw,76px);line-height:1.02;letter-spacing:-4px;margin:10px 0 18px}
+h1 em{font-style:normal;background:var(--yellow);padding:0 8px;border-radius:7px}
+.hero p{color:var(--muted);margin:0 0 23px}
+.primary,.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:11px 16px;border-radius:8px;border:1px solid var(--ink);
+  background:var(--ink);color:white;text-decoration:none;font-size:13px;font-weight:700
+}
+.btn{background:var(--white);color:var(--ink)}
+button:hover,.primary:hover{filter:brightness(.97)}
+.hero-art{
+  min-height:260px;background:var(--blue);border:1px solid var(--ink);
+  border-radius:18px;display:grid;place-items:center;overflow:hidden;position:relative
+}
+.hero-art svg{width:90%;max-width:380px}
+.hero-note{position:absolute;bottom:13px;right:13px;background:var(--white);border:1px solid var(--ink);border-radius:6px;padding:5px 9px;font-size:12px;transform:rotate(-3deg)}
+.section{padding:42px 0;border-top:1px solid var(--line);scroll-margin-top:18px}
+.section-heading{display:flex;justify-content:space-between;align-items:end;gap:15px;margin-bottom:22px}
+h2{font-size:clamp(29px,4vw,42px);letter-spacing:-1.7px;line-height:1.15;margin:4px 0 0}
+h3{margin:0 0 12px;font-size:18px}
+.panel{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:20px}
+.lab-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(240px,.8fr);gap:14px}
+.viewer-panel{padding:12px;min-width:0}
+.viewer-top{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:5px 5px 12px}
+.viewer-top strong{font-size:14px}
+.status{font-size:11px;color:var(--muted)}
+#viewer{
+  height:390px;min-height:300px;position:relative;overflow:hidden;
+  border-radius:10px;background:#e9edf0;touch-action:pan-y
+}
+#viewer canvas{display:block;width:100%;height:100%;outline:none}
+.viewer-help{
+  position:absolute;bottom:10px;left:10px;padding:6px 9px;
+  background:#fffef9d9;border:1px solid #d8d8d0;border-radius:6px;
+  font-size:11px;pointer-events:none
+}
+.viewer-buttons{display:flex;gap:7px;flex-wrap:wrap}
+.viewer-buttons button{font-size:11px;padding:7px 9px}
+.viewer-error{
+  position:absolute;inset:0;display:none;align-items:center;justify-content:center;
+  text-align:center;padding:25px;color:var(--ink);background:#e9edf0
+}
+.viewer-error.show{display:flex}
+.viewer-error div{max-width:330px}
+.viewer-error p{font-size:13px;color:var(--muted)}
+.controls{display:flex;flex-direction:column;gap:17px}
+.control label{display:flex;justify-content:space-between;gap:8px;font-size:12px;font-weight:700;margin-bottom:7px}
+.control output{color:#64865b}
+input[type=range]{width:100%;accent-color:#64865b;cursor:pointer}
+select{
+  width:100%;padding:10px;border:1px solid var(--line);border-radius:7px;
+  background:var(--white);color:var(--ink)
+}
+.measure-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.measure{padding:12px;border-radius:9px;background:var(--green);min-width:0}
+.measure:nth-child(2){background:var(--yellow)}
+.measure small{font-size:11px;display:block;color:#50554c}
+.measure strong{display:block;font-size:20px;overflow-wrap:anywhere}
+.measure-wide{grid-column:1/-1;background:var(--blue)}
+.shape-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.shape-card{
+  text-align:left;padding:12px;background:var(--white);color:var(--ink);
+  border:1px solid var(--line);border-radius:11px;transition:transform .15s
+}
+.shape-card:hover{transform:translateY(-2px);border-color:var(--ink)}
+.shape-card.active{border:2px solid var(--ink);padding:11px}
+.shape-art{height:95px;border-radius:7px;display:grid;place-items:center;margin-bottom:10px}
+.shape-art svg{width:100px;height:85px}
+.shape-card strong{display:block;font-size:14px}
+.shape-card small{font-size:11px;color:var(--muted)}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:17px}
+.filter{
+  border:1px solid var(--line);background:var(--white);color:var(--ink);
+  padding:8px 13px;border-radius:30px;font-size:12px
+}
+.filter.active{background:var(--ink);color:white;border-color:var(--ink)}
+.formula-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.formula-card{padding:16px;background:var(--white);border:1px solid var(--line);border-radius:11px}
+.formula-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.formula-card h3{font-size:14px;margin:0}
+.grade-tag{background:var(--green);border-radius:5px;padding:4px 7px;font-size:10px;white-space:nowrap}
+.formula{font-family:Georgia,"Times New Roman",serif;font-size:23px;overflow-wrap:anywhere;padding:12px 0 5px}
+.formula-card p{font-size:12px;color:var(--muted);margin:0}
+.practice-layout{display:grid;grid-template-columns:minmax(0,1fr) 155px;gap:13px}
+.question-card{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:23px}
+.question-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:20px}
+.question-number{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-weight:800}
+.question-text{font-size:23px;font-weight:800;letter-spacing:-.5px;margin:0 0 20px}
+.answers{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.answer{
+  text-align:left;padding:12px;border:1px solid var(--line);border-radius:8px;
+  background:var(--paper);color:var(--ink)
+}
+.answer:hover:not(:disabled){border-color:var(--ink)}
+.answer:disabled{cursor:default}
+.answer.correct{background:var(--green);border-color:#64865b}
+.answer.wrong{background:var(--coral);border-color:#b56b55}
+.feedback{min-height:23px;margin:13px 0 9px;font-size:13px;font-weight:700}
+.practice-actions{display:flex;flex-wrap:wrap;gap:8px}
+.score-card{
+  background:var(--yellow);border:1px solid var(--ink);border-radius:14px;
+  padding:18px;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start
+}
+.score-card strong{font-size:38px;letter-spacing:-2px}
+.score-card .btn{background:transparent;padding:7px 9px}
+footer{margin-top:25px;border-top:1px solid var(--line);padding:24px}
+.footer-inner{max-width:1100px;margin:auto;display:flex;justify-content:space-between;gap:12px;color:var(--muted);font-size:12px}
+@media(max-width:800px){
+  .hero{grid-template-columns:1fr;padding-top:48px}
+  .hero-art{min-height:220px}
+  .lab-grid{grid-template-columns:1fr}
+  .shape-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .viewer-top{align-items:flex-start;flex-direction:column}
+  .score-card{flex-direction:row;align-items:center;min-height:82px}
+}
+@media(max-width:500px){
+  nav{padding:15px 16px;align-items:flex-start;flex-direction:column}
+  .nav-links{gap:10px 15px}
+  main{padding:0 15px}
+  h1{letter-spacing:-2.5px}
+  #viewer{height:320px}
+  .formula-grid{grid-template-columns:1fr}
+  .practice-layout{grid-template-columns:1fr}
+  .question-card{padding:16px}
+  .question-text{font-size:20px}
+  .answers{grid-template-columns:1fr}
+}
+</style>
 
 <script type="importmap">
 {
@@ -15,1180 +177,590 @@
   }
 }
 </script>
-
-<style>
-:root {
-  --paper: #f6f5ef;
-  --white: #fffefa;
-  --ink: #292d28;
-  --muted: #666b63;
-  --green: #42664d;
-  --green-light: #e5eadf;
-  --line: #dcded4;
-}
-
-* { box-sizing: border-box; }
-
-html {
-  scroll-behavior: smooth;
-  scroll-padding-top: 75px;
-}
-
-body {
-  margin: 0;
-  background: var(--paper);
-  color: var(--ink);
-  font: 16px/1.6 Arial, Helvetica, sans-serif;
-}
-
-button, input { font: inherit; }
-button { cursor: pointer; }
-a { color: inherit; }
-
-header {
-  position: sticky;
-  top: 0;
-  z-index: 5;
-  background: var(--paper);
-  border-bottom: 1px solid var(--line);
-}
-
-nav {
-  max-width: 1080px;
-  margin: auto;
-  padding: 15px 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 24px;
-}
-
-.brand {
-  font-size: 1.25rem;
-  font-weight: 750;
-  letter-spacing: -.045em;
-  text-decoration: none;
-  white-space: nowrap;
-}
-
-.brand span { color: var(--green); }
-
-.links {
-  display: flex;
-  gap: 23px;
-  flex-wrap: wrap;
-}
-
-.links a {
-  font-size: .88rem;
-  color: var(--muted);
-  text-decoration: none;
-}
-
-.links a:hover {
-  color: var(--green);
-  text-decoration: underline;
-  text-underline-offset: 4px;
-}
-
-main {
-  max-width: 1080px;
-  margin: auto;
-  padding: 24px 24px 70px;
-}
-
-.hero {
-  display: grid;
-  grid-template-columns: 1.1fr .9fr;
-  gap: 42px;
-  align-items: center;
-  padding: 48px 0 57px;
-}
-
-.eyebrow {
-  font-size: .72rem;
-  text-transform: uppercase;
-  letter-spacing: .11em;
-  font-weight: 700;
-  color: var(--green);
-}
-
-h1, h2 {
-  font-family: Georgia, "Times New Roman", serif;
-  font-weight: 500;
-}
-
-h1 {
-  max-width: 590px;
-  font-size: clamp(2.45rem, 5vw, 3.75rem);
-  line-height: 1.08;
-  letter-spacing: -.045em;
-  margin: 16px 0;
-}
-
-p { color: var(--muted); }
-
-.hero p {
-  max-width: 470px;
-  font-size: 1.03rem;
-  line-height: 1.75;
-}
-
-.actions {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-top: 24px;
-}
-
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid #c9cec3;
-  border-radius: 4px;
-  background: var(--white);
-  color: var(--ink);
-  padding: 9px 14px;
-  font-size: .9rem;
-  font-weight: 600;
-  text-decoration: none;
-  transition: background .12s, border-color .12s;
-}
-
-.btn:hover {
-  border-color: var(--green);
-  background: #f0f2eb;
-}
-
-.btn.primary {
-  background: var(--green);
-  color: white;
-  border-color: var(--green);
-}
-
-.btn.primary:hover { background: #304f39; }
-
-.btn:disabled {
-  opacity: .5;
-  cursor: not-allowed;
-}
-
-.art {
-  min-height: 270px;
-  background: #eeeee5;
-  border: 1px solid #e2e2d8;
-  display: grid;
-  place-items: center;
-  overflow: hidden;
-}
-
-.art svg {
-  display: block;
-  width: 100%;
-  max-width: 390px;
-}
-
-.section {
-  margin-top: 45px;
-  padding-top: 27px;
-  border-top: 1px solid var(--line);
-}
-
-.head { margin-bottom: 19px; }
-
-.head h2 {
-  font-size: clamp(1.65rem, 3vw, 2.15rem);
-  line-height: 1.2;
-  letter-spacing: -.035em;
-  margin: 5px 0 6px;
-}
-
-.head p {
-  margin: 4px 0;
-  font-size: .95rem;
-}
-
-.panel, .card, .quiz {
-  background: var(--white);
-  border: 1px solid var(--line);
-  border-radius: 3px;
-}
-
-.lab {
-  display: grid;
-  grid-template-columns: 1.45fr .8fr;
-  gap: 17px;
-  align-items: start;
-}
-
-#viewer {
-  height: 350px;
-  position: relative;
-  background: #ecefe7;
-  border: 1px solid #e0e3d9;
-  overflow: hidden;
-}
-
-#viewer canvas {
-  display: block;
-  width: 100%;
-  height: 100%;
-  touch-action: none;
-}
-
-.status {
-  position: absolute;
-  bottom: 10px;
-  left: 10px;
-  z-index: 1;
-  background: var(--white);
-  border: 1px solid var(--line);
-  padding: 4px 9px;
-  font-size: .76rem;
-  color: var(--muted);
-  pointer-events: none;
-}
-
-.hintline {
-  font-size: .82rem;
-  margin: 8px 2px;
-}
-
-.controls { padding: 17px; }
-
-.controls h3 {
-  font-size: 1.03rem;
-  margin: 0 0 14px;
-}
-
-.choices, .filters {
-  display: flex;
-  gap: 7px;
-  flex-wrap: wrap;
-  margin-bottom: 16px;
-}
-
-.pick, .filter {
-  border: 1px solid #d6d9cf;
-  background: var(--white);
-  border-radius: 3px;
-  padding: 6px 9px;
-  font-size: .81rem;
-  color: var(--ink);
-}
-
-.pick:hover, .filter:hover { border-color: var(--green); }
-
-.pick.active, .filter.active {
-  background: var(--green-light);
-  border-color: #9eaf9b;
-  color: #2d4b35;
-  font-weight: 650;
-}
-
-.slider { margin: 15px 0; }
-
-.slider label { font-size: .86rem; }
-
-.slider-top {
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.slider output {
-  color: var(--green);
-  font-weight: 650;
-  font-variant-numeric: tabular-nums;
-}
-
-input[type="range"] {
-  width: 100%;
-  accent-color: var(--green);
-  cursor: pointer;
-}
-
-.metrics {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 9px;
-  margin-top: 18px;
-}
-
-.metric {
-  background: #f0f1e9;
-  border: 1px solid #e7e8df;
-  padding: 11px;
-}
-
-.metric small {
-  display: block;
-  color: var(--muted);
-  font-size: .74rem;
-}
-
-.metric strong {
-  display: block;
-  font-size: 1.05rem;
-  margin-top: 3px;
-  overflow-wrap: anywhere;
-}
-
-.notice {
-  font-size: .79rem;
-  margin-bottom: 0;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 13px;
-}
-
-.card {
-  padding: 14px;
-  min-width: 0;
-}
-
-.shape-art {
-  height: 94px;
-  background: #f0f0e8;
-  display: grid;
-  place-items: center;
-  margin-bottom: 12px;
-}
-
-.shape-art svg {
-  width: 78px;
-  height: 78px;
-}
-
-.card h3 {
-  font-size: .99rem;
-  line-height: 1.35;
-  margin: 0;
-}
-
-.card p {
-  font-size: .83rem;
-  line-height: 1.55;
-  margin: 5px 0 13px;
-}
-
-.card .btn {
-  font-size: .8rem;
-  padding: 7px 10px;
-}
-
-.formulas {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 13px;
-}
-
-.formula {
-  min-width: 0;
-  padding: 16px;
-  border: 1px solid var(--line);
-  background: var(--white);
-}
-
-.tag {
-  color: var(--green);
-  font-size: .7rem;
-  text-transform: uppercase;
-  letter-spacing: .08em;
-  font-weight: 700;
-}
-
-.formula h3 {
-  font-size: 1rem;
-  margin: 7px 0 10px;
-}
-
-.equation {
-  background: #f0f1e9;
-  border-left: 3px solid #9aaa91;
-  padding: 10px 11px;
-  font-weight: 650;
-  overflow-wrap: anywhere;
-}
-
-.formula p {
-  font-size: .83rem;
-  line-height: 1.55;
-  margin-bottom: 0;
-}
-
-.quiz { padding: 21px; }
-
-.quiztop {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
-  color: var(--muted);
-  font-size: .86rem;
-}
-
-.quiztop strong {
-  color: var(--ink);
-  font-variant-numeric: tabular-nums;
-}
-
-.quiz h3 {
-  font-size: 1.15rem;
-  line-height: 1.5;
-  margin: 19px 0;
-}
-
-.answers {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 9px;
-}
-
-.answer {
-  padding: 12px;
-  border: 1px solid #d9dcd2;
-  background: var(--white);
-  border-radius: 3px;
-  color: var(--ink);
-  text-align: left;
-  transition: border-color .12s, background .12s;
-}
-
-.answer:hover:not(:disabled) {
-  border-color: var(--green);
-  background: #f5f6f0;
-}
-
-.answer.correct {
-  background: #e5eee2;
-  border-color: #789b78;
-}
-
-.answer.wrong {
-  background: #f3e5df;
-  border-color: #c99a88;
-}
-
-.feedback {
-  min-height: 28px;
-  margin: 13px 0;
-  color: var(--muted);
-  font-size: .9rem;
-}
-
-.quizactions {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-footer {
-  border-top: 1px solid var(--line);
-  text-align: center;
-  padding: 23px 16px;
-  color: var(--muted);
-  font-size: .82rem;
-}
-
-button:focus-visible, a:focus-visible, input:focus-visible {
-  outline: 2px solid var(--green);
-  outline-offset: 3px;
-}
-
-@media (max-width: 760px) {
-  nav {
-    align-items: flex-start;
-    padding: 14px 18px;
-  }
-
-  .links {
-    justify-content: flex-end;
-    gap: 9px 14px;
-  }
-
-  .hero {
-    grid-template-columns: 1fr;
-    gap: 25px;
-    padding: 31px 0 38px;
-  }
-
-  .art { min-height: 210px; }
-  .lab { grid-template-columns: 1fr; }
-  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .formulas { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-
-  main {
-    padding-right: 18px;
-    padding-left: 18px;
-  }
-}
-
-@media (max-width: 480px) {
-  nav {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .links {
-    justify-content: flex-start;
-    gap: 9px 17px;
-  }
-
-  main { padding: 18px 14px 45px; }
-  h1 { font-size: 2.5rem; }
-  #viewer { height: 285px; }
-
-  .formulas, .answers { grid-template-columns: 1fr; }
-  .quiz { padding: 15px; }
-
-  .section {
-    margin-top: 35px;
-    padding-top: 22px;
-  }
-
-  .actions .btn { padding: 9px 11px; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-
-  *, *::before, *::after {
-    transition-duration: .01ms !important;
-  }
-}
-</style>
 </head>
 
 <body>
-<header>
-  <nav>
-    <a class="brand" href="#">Geo<span>Lab</span> ↗</a>
-    <div class="links">
-      <a href="#lab">3D Lab</a>
-      <a href="#shapes">Shapes</a>
-      <a href="#formulas">Formulas</a>
-      <a href="#practice">Practice</a>
-    </div>
-  </nav>
-</header>
+<nav>
+  <a class="logo" href="#">Geo<span>Lab</span>.</a>
+  <div class="nav-links">
+    <a href="#lab">3D Lab</a>
+    <a href="#shapes">Shapes</a>
+    <a href="#formulas">Formulas</a>
+    <a href="#practice">Practice</a>
+  </div>
+</nav>
 
 <main>
-<section class="hero">
+<header class="hero">
   <div>
-    <div class="eyebrow">Geometry, made visible</div>
-    <h1>Explore geometry in 2D &amp; 3D.</h1>
-    <p>Build shapes, drag the 3D models, change measurements, and actually see how the formulas work.</p>
-    <div class="actions">
-      <a class="btn primary" href="#lab">Open the 3D lab ↗</a>
-      <a class="btn" href="#practice">Try a question</a>
-    </div>
+    <div class="kicker">Your geometry playground</div>
+    <h1>Math you can <em>move.</em></h1>
+    <p>Spin it. Zoom in. Figure it out.</p>
+    <a class="primary" href="#lab">Enter the 3D lab ↘</a>
   </div>
-  <div class="art">
-    <svg viewBox="0 0 400 250" aria-label="Illustration of geometric solids">
-      <ellipse cx="200" cy="220" rx="150" ry="15" fill="#d3dfd0"/>
-      <g stroke="#356b55" stroke-width="2" stroke-linejoin="round">
-        <path d="M50 90 100 62 150 90 100 120Z" fill="#f5e8b9"/>
-        <path d="M50 90v58l50 28v-56Z" fill="#e6c96f"/>
-        <path d="M100 120 150 90v58l-50 28Z" fill="#d9b650"/>
-        <circle cx="230" cy="105" r="42" fill="#dceaf2"/>
-        <ellipse cx="230" cy="105" rx="16" ry="42" fill="none" stroke="#7ca3b9"/>
-        <ellipse cx="230" cy="105" rx="42" ry="15" fill="none" stroke="#7ca3b9"/>
-        <path d="M280 175 325 85 370 175Z" fill="#f0d8ce"/>
-        <ellipse cx="325" cy="175" rx="45" ry="11" fill="#e6b5a4"/>
+  <div class="hero-art">
+    <svg viewBox="0 0 340 230" aria-label="Geometric shapes">
+      <g stroke="#252b27" stroke-width="2.4" stroke-linejoin="round">
+        <path d="M65 72 L125 40 L185 72 L125 106 Z" fill="#fffef9"/>
+        <path d="M65 72 L65 140 L125 174 L125 106 Z" fill="#c9dfbd"/>
+        <path d="M125 106 L185 72 L185 140 L125 174 Z" fill="#8daf9e"/>
+        <circle cx="247" cy="72" r="31" fill="#f1c4b5"/>
+        <path d="M220 145 L274 145 L297 192 L197 192 Z" fill="#f2df9d"/>
       </g>
+      <path d="M247 41 L247 103 M216 72 L278 72" stroke="#252b27" stroke-width="1.3" stroke-dasharray="4 4"/>
     </svg>
+    <div class="hero-note">rotate to explore ✳</div>
   </div>
-</section>
+</header>
 
 <section class="section" id="lab">
-  <div class="head">
-    <div class="eyebrow">01 / Explore</div>
-    <h2>The 3D lab</h2>
-    <p>Drag to rotate. Scroll or pinch to zoom.</p>
+  <div class="section-heading">
+    <div><div class="kicker">01 / Interactive</div><h2>3D shape lab</h2></div>
   </div>
 
-  <div class="lab">
-    <div>
-      <div id="viewer">
-        <div class="status" id="status">Loading 3D viewer…</div>
+  <div class="lab-grid">
+    <div class="panel viewer-panel">
+      <div class="viewer-top">
+        <strong id="viewerTitle">Cube</strong>
+        <div class="viewer-buttons">
+          <button class="btn" id="pauseRotation" type="button">Pause spin</button>
+          <button class="btn" id="resetView" type="button">Reset view ↺</button>
+        </div>
       </div>
-      <p class="hintline">Tip: change a dimension and watch the solid change.</p>
+      <div id="viewer">
+        <div class="viewer-help">Drag to rotate · Scroll to zoom</div>
+        <div class="viewer-error" id="viewerError">
+          <div>
+            <strong>3D viewer couldn't load</strong>
+            <p>Check your internet connection and reload the page. The rest of GeoLab should still work.</p>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="panel controls">
-      <h3>Choose a solid</h3>
-      <div class="choices" id="choices"></div>
-      <div id="sliders"></div>
-
-      <div class="metrics">
-        <div class="metric">
-          <small>Volume</small>
-          <strong id="volume">—</strong>
-        </div>
-        <div class="metric">
-          <small>Surface area</small>
-          <strong id="area">—</strong>
-        </div>
+      <div class="control">
+        <label for="shapeSelect">Shape</label>
+        <select id="shapeSelect">
+          <option value="cube">Cube</option>
+          <option value="box">Rectangular prism</option>
+          <option value="sphere">Sphere</option>
+          <option value="cylinder">Cylinder</option>
+          <option value="cone">Cone</option>
+          <option value="triPrism">Triangular prism</option>
+          <option value="pyramid">Square pyramid</option>
+        </select>
       </div>
-      <p class="notice" id="note"></p>
+
+      <div class="control" id="controlA">
+        <label for="sliderA"><span id="labelA">Side length</span><output id="valueA">4</output></label>
+        <input id="sliderA" type="range" min="1" max="8" step=".5" value="4">
+      </div>
+      <div class="control" id="controlB">
+        <label for="sliderB"><span id="labelB">Width</span><output id="valueB">3</output></label>
+        <input id="sliderB" type="range" min="1" max="8" step=".5" value="3">
+      </div>
+      <div class="control" id="controlC">
+        <label for="sliderC"><span id="labelC">Height</span><output id="valueC">3</output></label>
+        <input id="sliderC" type="range" min="1" max="8" step=".5" value="3">
+      </div>
+
+      <div class="measure-grid">
+        <div class="measure"><small>Volume</small><strong id="volume">64</strong></div>
+        <div class="measure"><small>Surface area</small><strong id="surface">96</strong></div>
+        <div class="measure measure-wide"><small>Selected shape</small><strong id="shapeSummary">Cube</strong></div>
+      </div>
+      <button class="btn" id="resetDimensions" type="button">Reset dimensions ↺</button>
     </div>
   </div>
 </section>
 
 <section class="section" id="shapes">
-  <div class="head">
-    <div class="eyebrow">02 / Recognize</div>
-    <h2>Shape explorer</h2>
-    <p>Pick a solid to inspect it in the lab.</p>
+  <div class="section-heading">
+    <div><div class="kicker">02 / Choose</div><h2>Shape collection</h2></div>
   </div>
-  <div class="grid" id="shapeGrid"></div>
+
+  <div class="shape-grid">
+    <button class="shape-card active" data-shape="cube" type="button">
+      <div class="shape-art" style="background:#c9dfbd">
+        <svg viewBox="0 0 100 85"><g stroke="#252b27" stroke-width="2" stroke-linejoin="round"><path d="M15 28 L49 10 L84 28 L49 47 Z" fill="#fffef9"/><path d="M15 28 L15 62 L49 80 L49 47 Z" fill="#b6d0aa"/><path d="M49 47 L84 28 L84 62 L49 80 Z" fill="#8daf9e"/></g></svg>
+      </div><strong>Cube</strong><small>6 equal faces</small>
+    </button>
+
+    <button class="shape-card" data-shape="box" type="button">
+      <div class="shape-art" style="background:#cbdff0">
+        <svg viewBox="0 0 100 85"><g stroke="#252b27" stroke-width="2" stroke-linejoin="round"><path d="M13 28 L43 12 L88 27 L57 44 Z" fill="#fffef9"/><path d="M13 28 L13 61 L57 78 L57 44 Z" fill="#b2cce1"/><path d="M57 44 L88 27 L88 60 L57 78 Z" fill="#91b2d0"/></g></svg>
+      </div><strong>Rectangular prism</strong><small>6 rectangular faces</small>
+    </button>
+
+    <button class="shape-card" data-shape="sphere" type="button">
+      <div class="shape-art" style="background:#f1c4b5">
+        <svg viewBox="0 0 100 85"><defs><radialGradient id="ball" cx="30%" cy="25%"><stop offset="0" stop-color="#fffef9"/><stop offset="1" stop-color="#d38f7a"/></radialGradient></defs><circle cx="50" cy="42" r="31" fill="url(#ball)" stroke="#252b27" stroke-width="2"/></svg>
+      </div><strong>Sphere</strong><small>One curved surface</small>
+    </button>
+
+    <button class="shape-card" data-shape="cylinder" type="button">
+      <div class="shape-art" style="background:#f2df9d">
+        <svg viewBox="0 0 100 85"><g stroke="#252b27" stroke-width="2"><path d="M24 22 C24 8 76 8 76 22 L76 64 C76 78 24 78 24 64 Z" fill="#e8d18c"/><ellipse cx="50" cy="22" rx="26" ry="10" fill="#fffef9"/><path d="M24 64 C24 78 76 78 76 64" fill="none"/></g></svg>
+      </div><strong>Cylinder</strong><small>Two circular faces</small>
+    </button>
+
+    <button class="shape-card" data-shape="cone" type="button">
+      <div class="shape-art" style="background:#cbdff0">
+        <svg viewBox="0 0 100 85"><g stroke="#252b27" stroke-width="2" stroke-linejoin="round"><path d="M50 10 L19 68 C19 83 81 83 81 68 Z" fill="#a8c7e2"/><ellipse cx="50" cy="68" rx="31" ry="10" fill="#fffef9"/></g></svg>
+      </div><strong>Cone</strong><small>One circular base</small>
+    </button>
+
+    <button class="shape-card" data-shape="triPrism" type="button">
+      <div class="shape-art" style="background:#c9dfbd">
+        <svg viewBox="0 0 100 85"><g stroke="#252b27" stroke-width="2" stroke-linejoin="round"><path d="M12 63 L34 18 L57 63 Z" fill="#fffef9"/><path d="M34 18 L67 8 L89 51 L57 63 Z" fill="#a8c79b"/><path d="M57 63 L89 51 L89 69 L57 80 Z" fill="#85a97b"/><path d="M12 63 L45 51 L89 51" fill="none" stroke-dasharray="3 3"/></g></svg>
+      </div><strong>Triangular prism</strong><small>Two triangle faces</small>
+    </button>
+
+    <button class="shape-card" data-shape="pyramid" type="button">
+      <div class="shape-art" style="background:#f1c4b5">
+        <svg viewBox="0 0 100 85"><g stroke="#252b27" stroke-width="2" stroke-linejoin="round"><path d="M50 9 L14 65 L51 79 L87 65 Z" fill="#e9a995"/><path d="M50 9 L51 79 L14 65 Z" fill="#fffef9"/><path d="M50 9 L87 65 L51 79" fill="#d98f79"/></g></svg>
+      </div><strong>Square pyramid</strong><small>One square base</small>
+    </button>
+  </div>
 </section>
 
 <section class="section" id="formulas">
-  <div class="head">
-    <div class="eyebrow">03 / Remember</div>
-    <h2>Formula library</h2>
-    <p>Quick references for common solids.</p>
+  <div class="section-heading">
+    <div><div class="kicker">03 / Reference</div><h2>Formula library</h2></div>
   </div>
-  <div class="filters" id="filters">
-    <button class="filter active" data-filter="all">All formulas</button>
-    <button class="filter" data-filter="volume">Volume</button>
-    <button class="filter" data-filter="area">Surface area</button>
+  <div class="filters" id="formulaFilters">
+    <button class="filter active" data-grade="all" type="button">All</button>
+    <button class="filter" data-grade="4-6" type="button">Grades 4–6</button>
+    <button class="filter" data-grade="7-8" type="button">Grades 7–8</button>
+    <button class="filter" data-grade="9-10" type="button">Grades 9–10</button>
+    <button class="filter" data-grade="11-12" type="button">Grades 11–12</button>
   </div>
-  <div class="formulas" id="formulaGrid"></div>
+  <div class="formula-grid" id="formulaGrid"></div>
 </section>
 
 <section class="section" id="practice">
-  <div class="head">
-    <div class="eyebrow">04 / Practise</div>
-    <h2>Quick check</h2>
-    <p>Choose an answer and get feedback.</p>
+  <div class="section-heading">
+    <div><div class="kicker">04 / Practice</div><h2>Practice</h2></div>
   </div>
-  <div class="quiz">
-    <div class="quiztop">
-      <span id="qcount">Question 1</span>
-      <span>Score: <strong id="score">0 / 0</strong></span>
+  <div class="practice-layout">
+    <div class="question-card">
+      <div class="question-top">
+        <span class="question-number" id="questionNumber">QUESTION 1</span>
+        <span class="grade-tag" id="questionGrade">Grades 4–6</span>
+      </div>
+      <p class="question-text" id="questionText"></p>
+      <div class="answers" id="answerOptions"></div>
+      <div class="feedback" id="feedback" aria-live="polite"></div>
+      <div class="practice-actions">
+        <button class="primary" id="nextQuestion" type="button">Next →</button>
+        <button class="btn" id="showHint" type="button">Hint</button>
+      </div>
     </div>
-    <h3 id="question"></h3>
-    <div class="answers" id="answers"></div>
-    <div class="feedback" id="feedback" aria-live="polite"></div>
-    <div class="quizactions">
-      <button class="btn" id="hintBtn">Show hint</button>
-      <button class="btn primary" id="nextBtn">Next question →</button>
-      <button class="btn" id="resetBtn">Reset score</button>
-    </div>
+    <aside class="score-card">
+      <strong id="score">0/0</strong>
+      <button class="btn" id="resetQuiz" type="button">Reset ↺</button>
+    </aside>
   </div>
 </section>
 </main>
 
-<footer>GeoLab © 2026 · A geometry playground for Grades 4–12</footer>
+<footer><div class="footer-inner"><span>GeoLab © 2026</span><span>Grades 4–12</span></div></footer>
 
 <script>
-const shapes = {
-  cube: {
-    name: "Cube",
-    desc: "Six equal square faces.",
-    dims: [["a", "Side length", 1, 8, 4]],
-    v: d => d.a**3,
-    a: d => 6*d.a**2,
-    fv: "V = a³",
-    fa: "SA = 6a²",
-    note: "a = side length",
-    kind: "box"
-  },
-  box: {
-    name: "Rectangular prism",
-    desc: "Six rectangular faces.",
-    dims: [["l", "Length", 1, 10, 5], ["w", "Width", 1, 8, 3], ["h", "Height", 1, 8, 4]],
-    v: d => d.l*d.w*d.h,
-    a: d => 2*(d.l*d.w+d.l*d.h+d.w*d.h),
-    fv: "V = lwh",
-    fa: "SA = 2(lw + lh + wh)",
-    note: "l = length, w = width, h = height",
-    kind: "box"
-  },
-  sphere: {
-    name: "Sphere",
-    desc: "A perfectly round solid.",
-    dims: [["r", "Radius", 1, 6, 3]],
-    v: d => 4*Math.PI*d.r**3/3,
-    a: d => 4*Math.PI*d.r**2,
-    fv: "V = ⁴⁄₃πr³",
-    fa: "SA = 4πr²",
-    note: "r = radius",
-    kind: "sphere"
-  },
-  cylinder: {
-    name: "Cylinder",
-    desc: "Two matching circular ends.",
-    dims: [["r", "Radius", 1, 6, 3], ["h", "Height", 1, 9, 5]],
-    v: d => Math.PI*d.r**2*d.h,
-    a: d => 2*Math.PI*d.r*(d.r+d.h),
-    fv: "V = πr²h",
-    fa: "SA = 2πr(r + h)",
-    note: "r = radius, h = height",
-    kind: "cylinder"
-  },
-  cone: {
-    name: "Cone",
-    desc: "A circular base and one point.",
-    dims: [["r", "Radius", 1, 6, 3], ["h", "Height", 1, 9, 5]],
-    v: d => Math.PI*d.r**2*d.h/3,
-    a: d => Math.PI*d.r*(d.r+Math.hypot(d.r,d.h)),
-    fv: "V = ⅓πr²h",
-    fa: "SA = πr(r + s)",
-    note: "s = slant height √(r² + h²)",
-    kind: "cone"
-  },
-  prism: {
-    name: "Triangular prism",
-    desc: "A triangle extended through space.",
-    dims: [["b", "Triangle base", 1, 8, 4], ["t", "Triangle height", 1, 8, 3], ["l", "Prism length", 1, 8, 5]],
-    v: d => d.b*d.t*d.l/2,
-    a: d => d.b*d.t+d.l*(d.b+2*Math.hypot(d.b/2,d.t)),
-    fv: "V = ½btl",
-    fa: "SA = 2B + PL",
-    note: "Assumes an isosceles triangle.",
-    kind: "prism"
-  },
-  pyramid: {
-    name: "Square pyramid",
-    desc: "A square base and four triangular faces.",
-    dims: [["a", "Base side", 1, 8, 4], ["h", "Vertical height", 1, 8, 5]],
-    v: d => d.a*d.a*d.h/3,
-    a: d => d.a*d.a+2*d.a*Math.hypot(d.a/2,d.h),
-    fv: "V = ⅓a²h",
-    fa: "SA = a² + 2as",
-    note: "s = slant height √(h² + (a/2)²)",
-    kind: "pyramid"
-  }
-};
-
-let current = "cube";
-let vals = {};
-let draw3D = null;
-
-const $ = id => document.getElementById(id);
-const fmt = n => Number(n).toLocaleString(undefined, {maximumFractionDigits: 2});
-
-function getVals(k) {
-  const d = {};
-  shapes[k].dims.forEach(x => d[x[0]] = vals[k]?.[x[0]] ?? x[4]);
-  return d;
-}
-
-function selectShape(k) {
-  current = k;
-  vals[k] = getVals(k);
-  renderChoices();
-  renderSliders();
-  metrics();
-  if (draw3D) draw3D(k, getVals(k));
-}
-
-function renderChoices() {
-  $("choices").innerHTML = "";
-  Object.keys(shapes).forEach(k => {
-    const b = document.createElement("button");
-    b.className = "pick" + (k === current ? " active" : "");
-    b.textContent = shapes[k].name;
-    b.onclick = () => selectShape(k);
-    $("choices").appendChild(b);
-  });
-}
-
-function renderSliders() {
-  $("sliders").innerHTML = "";
-
-  shapes[current].dims.forEach(s => {
-    const row = document.createElement("div");
-    row.className = "slider";
-    const key = s[0];
-
-    row.innerHTML = `
-      <div class="slider-top">
-        <label for="range-${key}">${s[1]}</label>
-        <output id="out-${key}">${getVals(current)[key]}</output>
-      </div>
-      <input id="range-${key}" type="range"
-        min="${s[2]}" max="${s[3]}" step=".5"
-        value="${getVals(current)[key]}">
-    `;
-
-    row.querySelector("input").addEventListener("input", e => {
-      vals[current][key] = Number(e.target.value);
-      $("out-" + key).value = e.target.value;
-      metrics();
-      if (draw3D) draw3D(current, getVals(current));
-    });
-
-    $("sliders").appendChild(row);
-  });
-}
-
-function metrics() {
-  const s = shapes[current], d = getVals(current);
-  $("volume").textContent = fmt(s.v(d)) + " units³";
-  $("area").textContent = fmt(s.a(d)) + " units²";
-  $("note").textContent = s.note;
-}
-
-const iconPaths = {
-  cube: '<path d="M40 10 66 25 40 40 14 25Z" fill="#f5e8b9"/><path d="M14 25v30l26 15V40Z" fill="#e6c96f"/><path d="M40 40 66 25v30L40 70Z" fill="#d9b650"/>',
-  box: '<path d="M12 27 43 11 67 25 36 42Z" fill="#f5e8b9"/><path d="M12 27v29l24 13V42Z" fill="#e6c96f"/><path d="M36 42 67 25v29L36 69Z" fill="#d9b650"/>',
-  sphere: '<circle cx="40" cy="40" r="28" fill="#dceaf2" stroke="#7ca3b9" stroke-width="2"/><ellipse cx="40" cy="40" rx="12" ry="28" fill="none" stroke="#7ca3b9"/><ellipse cx="40" cy="40" rx="28" ry="10" fill="none" stroke="#7ca3b9"/>',
-  cylinder: '<path d="M16 22v37c0 12 48 12 48 0V22Z" fill="#dceaf2" stroke="#7ca3b9" stroke-width="2"/><ellipse cx="40" cy="22" rx="24" ry="9" fill="#edf5f9" stroke="#7ca3b9" stroke-width="2"/>',
-  cone: '<path d="M40 10 13 64Q40 78 67 64Z" fill="#f0d8ce" stroke="#c58f7e" stroke-width="2"/><ellipse cx="40" cy="64" rx="27" ry="9" fill="#e6b5a4"/>',
-  prism: '<path d="M12 58 28 27 44 58Z" fill="#f5e8b9" stroke="#b89d45" stroke-width="2"/><path d="M28 27 52 15 69 46 44 58Z" fill="#e6c96f" stroke="#b89d45" stroke-width="2"/><path d="M12 58 37 46 69 46" fill="none" stroke="#b89d45" stroke-width="2"/>',
-  pyramid: '<path d="M40 10 12 60 40 73 68 60Z" fill="#f5e8b9" stroke="#b89d45" stroke-width="2"/><path d="M40 10 40 73 68 60Z" fill="#d9b650" stroke="#b89d45" stroke-width="2"/>'
-};
-
-function renderShapeCards() {
-  $("shapeGrid").innerHTML = "";
-
-  Object.keys(shapes).forEach(k => {
-    const s = shapes[k], c = document.createElement("article");
-    c.className = "card";
-
-    c.innerHTML = `
-      <div class="shape-art">
-        <svg viewBox="0 0 80 80" aria-hidden="true">${iconPaths[k]}</svg>
-      </div>
-      <h3>${s.name}</h3>
-      <p>${s.desc}</p>
-      <button class="btn">Explore shape ↗</button>
-    `;
-
-    c.querySelector("button").onclick = () => {
-      selectShape(k);
-      $("lab").scrollIntoView({behavior: "smooth"});
-    };
-
-    $("shapeGrid").appendChild(c);
-  });
-}
-
-function renderFormulas(filter = "all") {
-  $("formulaGrid").innerHTML = "";
-
-  Object.keys(shapes).forEach(k => {
-    const s = shapes[k], c = document.createElement("article");
-    c.className = "formula";
-
-    if (filter === "volume" || filter === "area") {
-      c.innerHTML = `
-        <div class="tag">${filter === "volume" ? "Volume" : "Surface area"}</div>
-        <h3>${s.name}</h3>
-        <div class="equation">${filter === "volume" ? s.fv : s.fa}</div>
-        <p>${s.note}</p>
-      `;
-    } else {
-      c.innerHTML = `
-        <div class="tag">Formula pair</div>
-        <h3>${s.name}</h3>
-        <div class="equation">${s.fv}</div>
-        <p><strong>${s.fa}</strong></p>
-        <p>${s.note}</p>
-      `;
-    }
-
-    $("formulaGrid").appendChild(c);
-  });
-}
-
-$("filters").onclick = e => {
-  const b = e.target.closest("[data-filter]");
-  if (!b) return;
-
-  document.querySelectorAll(".filter").forEach(x =>
-    x.classList.toggle("active", x === b)
-  );
-
-  renderFormulas(b.dataset.filter);
-};
-
-const qs = [
-  {
-    q: "A cube has side length 3 cm. What is its volume?",
-    a: ["9 cm³", "18 cm³", "27 cm³", "36 cm³"],
-    c: 2,
-    h: "Volume of a cube is side × side × side.",
-    why: "3 × 3 × 3 = 27 cm³."
-  },
-  {
-    q: "What is the volume of a box measuring 4 × 3 × 2 units?",
-    a: ["9 units³", "24 units³", "18 units³", "12 units³"],
-    c: 1,
-    h: "Multiply length × width × height.",
-    why: "4 × 3 × 2 = 24 units³."
-  },
-  {
-    q: "Which formula gives the volume of a cylinder?",
-    a: ["πr²h", "2πr", "4πr²", "⅓πr²h"],
-    c: 0,
-    h: "Multiply the circle's area by the height.",
-    why: "The volume is πr²h."
-  },
-  {
-    q: "A sphere's radius doubles. Its surface area becomes…",
-    a: ["2 times", "3 times", "4 times", "8 times"],
-    c: 2,
-    h: "Surface area uses radius squared.",
-    why: "Doubling the radius makes surface area four times as large."
-  },
-  {
-    q: "A square pyramid has base side 6 and height 4. What is its volume?",
-    a: ["36 units³", "48 units³", "72 units³", "144 units³"],
-    c: 1,
-    h: "Use one-third × base area × vertical height.",
-    why: "⅓ × 6² × 4 = 48 units³."
-  },
-  {
-    q: "Which unit measures surface area?",
-    a: ["cm", "cm²", "cm³", "litres per second"],
-    c: 1,
-    h: "Area is measured in square units.",
-    why: "Surface area is measured in square units such as cm²."
-  }
+/* Formula library */
+const formulas = [
+  {name:"Rectangle area",f:"A = l × w",note:"Length times width.",g:"4-6"},
+  {name:"Rectangle perimeter",f:"P = 2(l + w)",note:"Add all four sides.",g:"4-6"},
+  {name:"Square area",f:"A = s²",note:"Side times side.",g:"4-6"},
+  {name:"Triangle area",f:"A = ½bh",note:"Base times height divided by 2.",g:"4-6"},
+  {name:"Rectangular prism volume",f:"V = lwh",note:"Length × width × height.",g:"7-8"},
+  {name:"Cube volume",f:"V = s³",note:"Side length cubed.",g:"7-8"},
+  {name:"Cube surface area",f:"SA = 6s²",note:"Six equal square faces.",g:"7-8"},
+  {name:"Circle area",f:"A = πr²",note:"Pi times radius squared.",g:"7-8"},
+  {name:"Circle circumference",f:"C = 2πr",note:"Distance around a circle.",g:"7-8"},
+  {name:"Cylinder volume",f:"V = πr²h",note:"Circle area times height.",g:"7-8"},
+  {name:"Pythagorean theorem",f:"a² + b² = c²",note:"For right triangles.",g:"7-8"},
+  {name:"Triangle angle sum",f:"A + B + C = 180°",note:"Interior angles of a triangle.",g:"7-8"},
+  {name:"Polygon angle sum",f:"(n − 2) × 180°",note:"Interior angle sum for n sides.",g:"9-10"},
+  {name:"Slope",f:"m = (y₂ − y₁)/(x₂ − x₁)",note:"Rise divided by run.",g:"9-10"},
+  {name:"Midpoint",f:"((x₁+x₂)/2, (y₁+y₂)/2)",note:"Average both coordinates.",g:"9-10"},
+  {name:"Distance",f:"d = √((x₂−x₁)² + (y₂−y₁)²)",note:"Distance between two points.",g:"9-10"},
+  {name:"Straight line",f:"y = mx + b",note:"m is slope; b is y-intercept.",g:"9-10"},
+  {name:"Quadratic formula",f:"x = (−b ± √(b²−4ac))/(2a)",note:"Solves ax² + bx + c = 0.",g:"11-12"},
+  {name:"Sine",f:"sin θ = opp./hyp.",note:"SOH in SOH-CAH-TOA.",g:"11-12"},
+  {name:"Cosine",f:"cos θ = adj./hyp.",note:"CAH in SOH-CAH-TOA.",g:"11-12"},
+  {name:"Sine law",f:"a/sin A = b/sin B",note:"For any triangle.",g:"11-12"},
+  {name:"Derivative power rule",f:"d(xⁿ)/dx = nxⁿ⁻¹",note:"Multiply by the power, then reduce it by one.",g:"11-12"}
 ];
-
-let qi = 0, done = false, correct = 0, attempts = 0;
-
-function updateScore() {
-  $("score").textContent = `${correct} / ${attempts}`;
+const gradeNames={"4-6":"Grades 4–6","7-8":"Grades 7–8","9-10":"Grades 9–10","11-12":"Grades 11–12"};
+function renderFormulas(filter="all"){
+  const grid=document.getElementById("formulaGrid");
+  grid.innerHTML=formulas.filter(x=>filter==="all"||x.g===filter).map(x=>
+    `<article class="formula-card"><div class="formula-top"><h3>${x.name}</h3><span class="grade-tag">${gradeNames[x.g]}</span></div><div class="formula">${x.f}</div><p>${x.note}</p></article>`
+  ).join("");
 }
-
-function showQuestion() {
-  done = false;
-  const q = qs[qi];
-
-  $("qcount").textContent = `Question ${qi + 1} of ${qs.length}`;
-  $("question").textContent = q.q;
-  $("feedback").textContent = "";
-  $("hintBtn").disabled = false;
-  $("nextBtn").textContent = qi === qs.length - 1 ? "Start again ↻" : "Next question →";
-  $("answers").innerHTML = "";
-
-  q.a.forEach((a, i) => {
-    const b = document.createElement("button");
-    b.className = "answer";
-    b.textContent = a;
-    b.onclick = () => answer(i);
-    $("answers").appendChild(b);
-  });
-
-  updateScore();
-}
-
-function answer(i) {
-  if (done) return;
-
-  done = true;
-  attempts++;
-
-  const q = qs[qi];
-
-  [...$("answers").children].forEach((b, j) => {
-    b.disabled = true;
-    if (j === q.c) b.classList.add("correct");
-    if (j === i && i !== q.c) b.classList.add("wrong");
-  });
-
-  if (i === q.c) {
-    correct++;
-    $("feedback").textContent = "Correct! " + q.why;
-  } else {
-    $("feedback").textContent = "Not quite. " + q.why;
-  }
-
-  updateScore();
-}
-
-$("hintBtn").onclick = () => {
-  $("feedback").textContent = "Hint: " + qs[qi].h;
-  $("hintBtn").disabled = true;
-};
-
-$("nextBtn").onclick = () => {
-  qi = (qi + 1) % qs.length;
-  showQuestion();
-};
-
-$("resetBtn").onclick = () => {
-  qi = 0;
-  correct = 0;
-  attempts = 0;
-  showQuestion();
-};
-
-renderChoices();
-renderSliders();
-metrics();
-renderShapeCards();
+document.querySelectorAll(".filter").forEach(btn=>btn.addEventListener("click",()=>{
+  document.querySelectorAll(".filter").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");renderFormulas(btn.dataset.grade);
+}));
 renderFormulas();
+
+/* Practice quiz */
+const questions=[
+ {g:"Grades 4–6",q:"A box is 4 cm long, 3 cm wide and 2 cm high. What is its volume?",a:["9 cm³","24 cm³","12 cm³","18 cm³"],c:1,h:"Multiply length × width × height.",e:"4 × 3 × 2 = 24 cm³."},
+ {g:"Grades 4–6",q:"A square has sides of 6 cm. What is its area?",a:["12 cm²","24 cm²","36 cm²","30 cm²"],c:2,h:"Multiply the side by itself.",e:"6 × 6 = 36 cm²."},
+ {g:"Grades 4–6",q:"How many faces does a cube have?",a:["4","6","8","12"],c:1,h:"Count every flat square face.",e:"A cube has 6 faces."},
+ {g:"Grades 7–8",q:"A cylinder has radius 2 cm and height 5 cm. What is its volume?",a:["10π cm³","20π cm³","25π cm³","4π cm³"],c:1,h:"Use V = πr²h.",e:"π × 2² × 5 = 20π cm³."},
+ {g:"Grades 7–8",q:"A sphere has radius 3 cm. What is its surface area?",a:["9π cm²","12π cm²","36π cm²","27π cm²"],c:2,h:"Use SA = 4πr².",e:"4 × π × 3² = 36π cm²."},
+ {g:"Grades 7–8",q:"A right triangle has legs 3 and 4. What is the hypotenuse?",a:["5","6","7","12"],c:0,h:"Use a² + b² = c².",e:"3² + 4² = 25, so the hypotenuse is 5."},
+ {g:"Grades 9–10",q:"What is the slope between (1, 2) and (3, 6)?",a:["2","4","½","3"],c:0,h:"Divide the change in y by the change in x.",e:"(6 − 2) ÷ (3 − 1) = 2."},
+ {g:"Grades 9–10",q:"What is the sum of the interior angles of a hexagon?",a:["360°","540°","720°","900°"],c:2,h:"Use (n − 2) × 180°.",e:"(6 − 2) × 180° = 720°."},
+ {g:"Grades 11–12",q:"What is the derivative of x³?",a:["x²","2x","3x²","3x"],c:2,h:"Multiply by the power, then subtract one from the power.",e:"The derivative is 3x²."},
+ {g:"Grades 11–12",q:"What is sin θ in a right triangle?",a:["Adjacent/hypotenuse","Opposite/hypotenuse","Opposite/adjacent","Hypotenuse/opposite"],c:1,h:"Remember SOH-CAH-TOA.",e:"Sine = opposite ÷ hypotenuse."}
+];
+let qi=0,correct=0,attempted=0,answered=false;
+const $=id=>document.getElementById(id);
+function showQuestion(){
+  const q=questions[qi];answered=false;
+  $("questionNumber").textContent=`QUESTION ${qi+1} / ${questions.length}`;
+  $("questionGrade").textContent=q.g;
+  $("questionText").textContent=q.q;
+  $("feedback").textContent="";
+  $("showHint").disabled=false;
+  $("answerOptions").innerHTML=q.a.map((a,i)=>`<button class="answer" type="button" data-i="${i}">${a}</button>`).join("");
+  document.querySelectorAll(".answer").forEach(b=>b.addEventListener("click",()=>answerQuestion(Number(b.dataset.i))));
+  $("nextQuestion").textContent=qi===questions.length-1?"Start over ↻":"Next →";
+}
+function answerQuestion(i){
+  if(answered)return;answered=true;attempted++;
+  const q=questions[qi];
+  document.querySelectorAll(".answer").forEach((b,j)=>{
+    b.disabled=true;
+    if(j===q.c)b.classList.add("correct");
+    if(j===i&&i!==q.c)b.classList.add("wrong");
+  });
+  if(i===q.c){correct++;$("feedback").textContent="Correct!";}
+  else $("feedback").textContent="Not quite. "+q.e;
+  $("score").textContent=correct+"/"+attempted;
+  $("showHint").disabled=true;
+}
+$("showHint").addEventListener("click",()=>{if(!answered)$("feedback").textContent=questions[qi].h;});
+$("nextQuestion").addEventListener("click",()=>{qi=qi===questions.length-1?0:qi+1;showQuestion();});
+$("resetQuiz").addEventListener("click",()=>{qi=0;correct=0;attempted=0;$("score").textContent="0/0";showQuestion();});
 showQuestion();
 </script>
 
 <script type="module">
-const status = document.getElementById("status");
+import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
-try {
-  // Import map above makes Three.js available to OrbitControls too.
-  const THREE = await import("three");
-  const { OrbitControls } = await import("three/addons/controls/OrbitControls.js");
+const viewer=document.getElementById("viewer");
+const errorBox=document.getElementById("viewerError");
+const shapeSelect=document.getElementById("shapeSelect");
+const sliders={
+  a:document.getElementById("sliderA"),
+  b:document.getElementById("sliderB"),
+  c:document.getElementById("sliderC")
+};
+const labels={
+  a:document.getElementById("labelA"),
+  b:document.getElementById("labelB"),
+  c:document.getElementById("labelC")
+};
+const outputs={
+  a:document.getElementById("valueA"),
+  b:document.getElementById("valueB"),
+  c:document.getElementById("valueC")
+};
 
-  const host = document.getElementById("viewer");
-  const scene = new THREE.Scene();
-  scene.background = new THREE.Color("#ecefe7");
+let scene,camera,renderer,controls,mesh;
+let spinning=true;
+let animationId=0;
 
-  const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
-  camera.position.set(7, 6, 9);
+const mat=(color,roughness=.52)=>new THREE.MeshStandardMaterial({
+  color,roughness,metalness:.04
+});
 
-  const renderer = new THREE.WebGLRenderer({ antialias: true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-  renderer.setSize(host.clientWidth, host.clientHeight);
-  host.insertBefore(renderer.domElement, status);
+const palette={
+  main:mat("#86b5a0"),
+  side:mat("#cbdff0"),
+  top:mat("#f2df9d"),
+  dark:mat("#e9a995"),
+  wire:new THREE.LineBasicMaterial({color:"#27332e",transparent:true,opacity:.8})
+};
 
-  scene.add(new THREE.HemisphereLight(0xffffff, 0x84927e, 2));
+function init3D(){
+  try{
+    scene=new THREE.Scene();
+    scene.background=new THREE.Color("#e9edf0");
 
-  const light = new THREE.DirectionalLight(0xffffff, 2);
-  light.position.set(5, 8, 6);
-  scene.add(light);
+    camera=new THREE.PerspectiveCamera(38,1,.1,100);
+    camera.position.set(6,5,8);
 
-  const controls = new OrbitControls(camera, renderer.domElement);
-  controls.enableDamping = true;
-  controls.target.set(0, 0, 0);
-  controls.minDistance = 4;
-  controls.maxDistance = 20;
+    renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+    renderer.outputColorSpace=THREE.SRGBColorSpace;
+    renderer.shadowMap.enabled=true;
+    renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+    viewer.insertBefore(renderer.domElement,viewer.firstChild);
 
-  scene.add(new THREE.GridHelper(12, 12, 0xb4c3b0, 0xd2dbce));
+    controls=new OrbitControls(camera,renderer.domElement);
+    controls.enableDamping=true;
+    controls.dampingFactor=.06;
+    controls.minDistance=3;
+    controls.maxDistance=18;
+    controls.target.set(0,0,0);
 
-  let mesh = null;
+    scene.add(new THREE.HemisphereLight("#ffffff","#a8b5c2",2.1));
+    const light=new THREE.DirectionalLight("#ffffff",2.5);
+    light.position.set(5,8,6);
+    scene.add(light);
+    const fill=new THREE.DirectionalLight("#d4e5ff",1.1);
+    fill.position.set(-5,2,-5);
+    scene.add(fill);
 
-  function geometry(k, d) {
-    switch (k) {
-      case "cube":
-        return new THREE.BoxGeometry(d.a, d.a, d.a);
+    const floor=new THREE.Mesh(
+      new THREE.PlaneGeometry(200,200),
+      new THREE.ShadowMaterial({opacity:.12})
+    );
+    floor.rotation.x=-Math.PI/2;
+    floor.position.y=-4.5;
+    floor.receiveShadow=true;
+    scene.add(floor);
 
-      case "box":
-        return new THREE.BoxGeometry(d.l, d.h, d.w);
+    const grid=new THREE.GridHelper(14,14,"#c3cdd2","#d5dce0");
+    grid.position.y=-4.49;
+    scene.add(grid);
 
-      case "sphere":
-        return new THREE.SphereGeometry(d.r, 40, 28);
-
-      case "cylinder":
-        return new THREE.CylinderGeometry(d.r, d.r, d.h, 48);
-
-      case "cone":
-        return new THREE.ConeGeometry(d.r, d.h, 48);
-
-      case "prism": {
-        const s = new THREE.Shape();
-        s.moveTo(-d.b/2, -d.t/2);
-        s.lineTo(d.b/2, -d.t/2);
-        s.lineTo(0, d.t/2);
-        s.closePath();
-
-        const g = new THREE.ExtrudeGeometry(s, {
-          depth: d.l,
-          bevelEnabled: false
-        });
-
-        g.translate(0, 0, -d.l/2);
-        return g;
-      }
-
-      case "pyramid": {
-        const a = d.a/2, h = d.h/2;
-        const p = [
-          -a,-h,-a, a,-h,-a, a,-h,a, -a,-h,a, 0,h,0
-        ];
-        const idx = [
-          0,2,1, 0,3,2, 0,1,4, 1,2,4, 2,3,4, 3,0,4
-        ];
-
-        const g = new THREE.BufferGeometry();
-        g.setAttribute("position", new THREE.Float32BufferAttribute(p, 3));
-        g.setIndex(idx);
-        g.computeVertexNormals();
-        return g;
-      }
-    }
-
-    throw new Error("Unknown shape: " + k);
+    resize3D();
+    window.addEventListener("resize",resize3D);
+    buildShape();
+    animate();
+  }catch(error){
+    console.error("GeoLab 3D error:",error);
+    errorBox.classList.add("show");
   }
-
-  function draw(k, d) {
-    try {
-      if (mesh) {
-        scene.remove(mesh);
-        mesh.geometry.dispose();
-        mesh.material.dispose();
-      }
-
-      const g = geometry(k, d);
-      g.computeBoundingBox();
-
-      const size = new THREE.Vector3();
-      g.boundingBox.getSize(size);
-
-      const scale = 4 / (Math.max(size.x, size.y, size.z) || 1);
-      g.scale(scale, scale, scale);
-
-      mesh = new THREE.Mesh(
-        g,
-        new THREE.MeshStandardMaterial({
-          color: 0x78977b,
-          roughness: 0.7,
-          side: THREE.DoubleSide
-        })
-      );
-
-      scene.add(mesh);
-
-      if (k === "prism") mesh.rotation.y = -Math.PI/2;
-
-      status.textContent = "3D model ready · drag to rotate";
-    } catch (e) {
-      status.textContent = "Could not draw this shape.";
-      console.error("GeoLab shape error:", e);
-    }
-  }
-
-  // Connect the renderer to the existing shape buttons and sliders.
-  window.drawGeoLabShape = draw;
-  draw3D = draw;
-  draw(current, getVals(current));
-
-  function resize() {
-    const w = host.clientWidth;
-    const h = host.clientHeight;
-    if (!w || !h) return;
-
-    camera.aspect = w / h;
-    camera.updateProjectionMatrix();
-    renderer.setSize(w, h);
-  }
-
-  new ResizeObserver(resize).observe(host);
-  window.addEventListener("resize", resize);
-
-  function animate() {
-    requestAnimationFrame(animate);
-    controls.update();
-    renderer.render(scene, camera);
-  }
-
-  animate();
-} catch (e) {
-  status.textContent = "3D viewer unavailable. Check your connection or browser WebGL support.";
-  console.error("GeoLab 3D error:", e);
 }
+
+function disposeObject(object){
+  if(!object)return;
+  object.traverse(child=>{
+    if(child.geometry)child.geometry.dispose();
+    if(child.material){
+      if(Array.isArray(child.material))child.material.forEach(m=>m.dispose());
+      else child.material.dispose();
+    }
+  });
+  scene.remove(object);
+}
+
+function makeEdges(geometry,parent){
+  const edgeGeo=new THREE.EdgesGeometry(geometry);
+  const edgeLines=new THREE.LineSegments(edgeGeo,new THREE.LineBasicMaterial({color:"#34423b",transparent:true,opacity:.55}));
+  parent.add(edgeLines);
+}
+
+function solid(geometry,material,parent){
+  const object=new THREE.Mesh(geometry,material);
+  object.castShadow=true;
+  object.receiveShadow=true;
+  parent.add(object);
+  makeEdges(geometry,object);
+  return object;
+}
+
+function makeShape(type,a,b,c){
+  const group=new THREE.Group();
+  const m1=mat("#83b39d"),m2=mat("#cbdff0"),m3=mat("#f2df9d"),m4=mat("#f1c4b5");
+
+  if(type==="cube"){
+    solid(new THREE.BoxGeometry(a,a,a),m1,group);
+  }else if(type==="box"){
+    solid(new THREE.BoxGeometry(a,b,c),m1,group);
+  }else if(type==="sphere"){
+    solid(new THREE.SphereGeometry(a/2,48,32),m2,group);
+  }else if(type==="cylinder"){
+    solid(new THREE.CylinderGeometry(a/2,a/2,b,48),m3,group);
+  }else if(type==="cone"){
+    solid(new THREE.ConeGeometry(a/2,b,48),m4,group);
+  }else if(type==="triPrism"){
+    // A triangular prism: an equilateral triangular cross-section extruded along its length.
+    const side=a, length=b;
+    const shape=new THREE.Shape();
+    shape.moveTo(-side/2,-side/(2*Math.sqrt(3)));
+    shape.lineTo(side/2,-side/(2*Math.sqrt(3)));
+    shape.lineTo(0,side/Math.sqrt(3));
+    shape.closePath();
+    const geo=new THREE.ExtrudeGeometry(shape,{depth:length,bevelEnabled:false});
+    geo.translate(0,0,-length/2);
+    geo.rotateX(-Math.PI/2);
+    solid(geo,m1,group);
+  }else if(type==="pyramid"){
+    solid(new THREE.ConeGeometry(a/Math.sqrt(2),b,4,1),m4,group).rotation.y=Math.PI/4;
+  }
+  group.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});
+  return group;
+}
+
+function currentDimensions(){
+  return {
+    a:Number(sliders.a.value),
+    b:Number(sliders.b.value),
+    c:Number(sliders.c.value)
+  };
+}
+
+function getShapeName(type){
+  return ({
+    cube:"Cube",
+    box:"Rectangular prism",
+    sphere:"Sphere",
+    cylinder:"Cylinder",
+    cone:"Cone",
+    triPrism:"Triangular prism",
+    pyramid:"Square pyramid"
+  })[type];
+}
+
+function configureControls(type){
+  const settings={
+    cube:[["Side length",1,8,4],null,null],
+    box:[["Length",1,8,4],["Width",1,8,3],["Height",1,8,3]],
+    sphere:[["Diameter",1,8,4],null,null],
+    cylinder:[["Diameter",1,8,4],["Height",1,8,5],null],
+    cone:[["Diameter",1,8,4],["Height",1,8,5],null],
+    triPrism:[["Triangle side",1,8,4],["Prism length",1,8,5],null],
+    pyramid:[["Base side",1,8,4],["Height",1,8,5],null]
+  }[type];
+
+  ["a","b","c"].forEach((key,i)=>{
+    const el=document.getElementById("control"+key.toUpperCase());
+    const cfg=settings[i];
+    el.style.display=cfg?"":"none";
+    if(cfg){
+      labels[key].textContent=cfg[0];
+      sliders[key].min=cfg[1];
+      sliders[key].max=cfg[2];
+      sliders[key].value=cfg[3];
+      outputs[key].textContent=cfg[3];
+    }
+  });
+}
+
+function calculate(type,a,b,c){
+  let volume=0,surface=0;
+  const pi=Math.PI;
+
+  if(type==="cube"){
+    volume=a**3;surface=6*a**2;
+  }else if(type==="box"){
+    volume=a*b*c;surface=2*(a*b+a*c+b*c);
+  }else if(type==="sphere"){
+    const r=a/2;
+    volume=4*pi*r**3/3;surface=4*pi*r**2;
+  }else if(type==="cylinder"){
+    const r=a/2,h=b;
+    volume=pi*r*r*h;surface=2*pi*r*(r+h);
+  }else if(type==="cone"){
+    const r=a/2,h=b;
+    volume=pi*r*r*h/3;surface=pi*r*(r+Math.sqrt(r*r+h*h));
+  }else if(type==="triPrism"){
+    const s=a,L=b,triangleArea=Math.sqrt(3)*s*s/4;
+    volume=triangleArea*L;
+    surface=2*triangleArea+3*s*L;
+  }else if(type==="pyramid"){
+    const s=a,h=b,slant=Math.sqrt(h*h+(s/2)**2);
+    volume=s*s*h/3;
+    surface=s*s+2*s*slant;
+  }
+  return {volume,surface};
+}
+
+function formatNumber(n){
+  return Number(n.toFixed(2)).toLocaleString("en-CA",{maximumFractionDigits:2});
+}
+
+function buildShape(){
+  if(!scene)return;
+  const type=shapeSelect.value;
+  const {a,b,c}=currentDimensions();
+
+  if(mesh)disposeObject(mesh);
+  mesh=makeShape(type,a,b,c);
+  scene.add(mesh);
+
+  // Keep the selected object centered and at a useful scale.
+  const box=new THREE.Box3().setFromObject(mesh);
+  const size=box.getSize(new THREE.Vector3());
+  const largest=Math.max(size.x,size.y,size.z)||1;
+  const scale=3.2/largest;
+  mesh.scale.setScalar(scale);
+
+  document.getElementById("viewerTitle").textContent=getShapeName(type);
+  document.getElementById("shapeSummary").textContent=getShapeName(type);
+
+  ["a","b","c"].forEach(k=>outputs[k].textContent=sliders[k].value);
+
+  const result=calculate(type,a,b,c);
+  document.getElementById("volume").textContent=formatNumber(result.volume);
+  document.getElementById("surface").textContent=formatNumber(result.surface);
+
+  document.querySelectorAll(".shape-card").forEach(card=>{
+    card.classList.toggle("active",card.dataset.shape===type);
+  });
+}
+
+function resize3D(){
+  if(!renderer||!camera)return;
+  const width=Math.max(1,viewer.clientWidth);
+  const height=Math.max(1,viewer.clientHeight);
+  renderer.setSize(width,height,false);
+  camera.aspect=width/height;
+  camera.updateProjectionMatrix();
+}
+
+function animate(){
+  animationId=requestAnimationFrame(animate);
+  if(mesh&&spinning)mesh.rotation.y+=.0035;
+  if(controls)controls.update();
+  if(renderer&&scene&&camera)renderer.render(scene,camera);
+}
+
+shapeSelect.addEventListener("change",()=>{
+  configureControls(shapeSelect.value);
+  buildShape();
+});
+Object.values(sliders).forEach(slider=>slider.addEventListener("input",buildShape));
+
+document.querySelectorAll(".shape-card").forEach(card=>{
+  card.addEventListener("click",()=>{
+    shapeSelect.value=card.dataset.shape;
+    configureControls(shapeSelect.value);
+    buildShape();
+    document.getElementById("lab").scrollIntoView({behavior:"smooth"});
+  });
+});
+
+document.getElementById("pauseRotation").addEventListener("click",event=>{
+  spinning=!spinning;
+  event.currentTarget.textContent=spinning?"Pause spin":"Resume spin";
+});
+
+document.getElementById("resetView").addEventListener("click",()=>{
+  if(!camera||!controls)return;
+  camera.position.set(6,5,8);
+  controls.target.set(0,0,0);
+  controls.update();
+});
+
+document.getElementById("resetDimensions").addEventListener("click",()=>{
+  configureControls(shapeSelect.value);
+  buildShape();
+});
+
+configureControls(shapeSelect.value);
+init3D();
 </script>
 </body>
 </html>
